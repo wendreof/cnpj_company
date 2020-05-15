@@ -117,15 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _setValues(Cnpj cnpj, Map<String, dynamic> res) {
-    print(NumberFormat.currency(locale: 'pt-br').format(cnpj.value));
+    var counter = 0;
+    var socios;
+    // print(NumberFormat.currency(locale: 'pt-br').format(cnpj.value));
     var capitalSocialFixed =
         NumberFormat.currency(locale: 'pt-br').format(cnpj.value).toString();
 
-    var counter = 0;
-    var socios;
-
     List<dynamic> teste = res["qsa"];
-    print('teste: $teste, ${teste.length}, (${teste.length - 1})');
+    //print('teste: $teste, ${teste.length}, (${teste.length - 1})');
 
     while (counter <= (teste.length - 1)) {
       nomeSocios.add(
@@ -133,8 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       counter++;
     }
-    print('nomeSocios: $nomeSocios');
-
+    //  print('nomeSocios: $nomeSocios');
     socios = nomeSocios.length > 0 ? nomeSocios : constants.qsaNull;
     // socios = teste.toString();
 
