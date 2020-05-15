@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:http/http.dart' as http;
 import "package:intl/intl.dart";
+import 'contants.dart' as constants;
 
 void main() {
   runApp(MyApp());
@@ -57,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _phoneController = TextEditingController();
   final _sociosController = TextEditingController();
   final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
+  String situacaoCadastral;
 
   List<String> nomeSocios = [];
   Map mapSocios = {};
@@ -83,23 +85,30 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String _fixCNPJ(String cnpj) {
-    cnpj = cnpj.replaceAll('.', '');
-    cnpj = cnpj.replaceAll('/', '');
-    cnpj = cnpj.replaceAll('-', '');
-    cnpj = cnpj.replaceAll(',', '');
+    cnpj = cnpj
+        .replaceAll('.', '')
+        .replaceAll('/', '')
+        .replaceAll('-', '')
+        .replaceAll(',', '');
     return cnpj;
   }
 
-  void _getData() async {
-    print("************************************************************");
-    print("************************ GET_CNPJ *********************");
-    print("************************************************************");
+  String _fixSocios(String socios) {
+    socios = socios
+        .replaceAll("[", "")
+        .replaceAll("]", "")
+        .replaceAll("-", " ")
+        .replaceAll(",", "");
+    return socios;
+  }
 
+  void _getData() async {
     http.Response response;
     var cnpjFixed = _fixCNPJ(_cnpjController.text);
-    print('_cnpjController.text: ${_cnpjController.text}');
-    print('http://www.receitaws.com.br/v1/cnpj/$cnpjFixed');
-    response = await http.get('http://www.receitaws.com.br/v1/cnpj/$cnpjFixed');
+
+    print('${constants.url}$cnpjFixed');
+
+    response = await http.get('${constants.url}$cnpjFixed');
 
     print('response.body GET_CNPJ: ${response.body}');
 
@@ -109,92 +118,83 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (statusCode == 'OK') {
       print('OK, $statusCode');
-
-      var numero = res["numero"];
-
-      var situacao = res["situacao"];
-
-      var fantasia = res["fantasia"];
-
-      var razao = res["nome"];
-
-      var complemento = res["complemento"];
-
-      var bairro = res["bairro"];
-
-      var situacaoCadastral = res["cep"];
-
-      var nome = res["municipio"];
-
-      var logradouro = res["logradouro"];
-
-      var naturezaJuridica = res["natureza_juridica"];
-
-      var cnae = res["atividade_principal"][0]['text'];
-      var cnae2 = res["atividade_principal"][0]['code'];
-
-      var capitalSocial = res["capital_social"];
-
-      var value = double.parse(capitalSocial);
-      // capitalSocial = value
-
-      print(NumberFormat.currency(locale: 'pt-br').format(value));
-      var capitalSocialFixed =
-          NumberFormat.currency(locale: 'pt-br').format(value).toString();
-
-      var telefone = res["telefone"];
-
-      var counter = 0;
-      var socios;
-
-      List<dynamic> teste = res["qsa"];
-      print('teste: $teste, ${teste.length}, (${teste.length - 1})');
-
-      while (counter <= (teste.length - 1)) {
-        nomeSocios.add(
-            '${res["qsa"][counter]['nome']} (${res["qsa"][counter]['qual']})\n\n');
-
-        counter++;
-      }
-      print('nomeSocios: $nomeSocios');
-
-      socios = nomeSocios.toString();
-      // socios = teste.toString();
-
-      _sociosController.text = socios
-          .toString()
-          .replaceAll("[", "")
-          .replaceAll("]", "")
-          .replaceAll("-", " ")
-          .replaceAll(",", "");
-
-      _phoneController.text = telefone;
-
-      _capitalSocialController.text =
-          'R\$ ${capitalSocialFixed.replaceAll('BRL', '')}';
-
-      _cnaeController.text = 'Atividade Principal: $cnae \nCódigo: $cnae2';
-
-      _naturezaJuridicaController.text = naturezaJuridica;
-
-      _situacaoCadastralController.text = situacao;
-
-      _nomeController.text =
-          'Razão Social: $razao \n\nNome Fantasia: $fantasia';
-
-      _logradouroController.text =
-          'Logradouro: $logradouro \nNº: $numero \nComplemento: $complemento \nCEP: $situacaoCadastral \nBairro: $bairro \nCidade: $nome';
-
-      print('logradouro: $logradouro');
-      print('cep: $situacaoCadastral');
-      print('numero: $numero');
-      print('situacao: $situacao');
-      print('municipio: $nome');
-      print('fantasia: $fantasia');
+      _setValues(res);
     } else {
       _showMsg(res["message"]);
       _initializeFields();
       print('Error, $statusCode');
+    }
+  }
+
+  void _setValues(Map<String, dynamic> res) {
+    //get values
+    var numero = res["numero"];
+    var situacao = res["situacao"];
+    var fantasia = res["fantasia"];
+    var razao = res["nome"];
+    var complemento = res["complemento"];
+    var bairro = res["bairro"];
+    situacaoCadastral = res["cep"];
+    var nome = res["municipio"];
+    var logradouro = res["logradouro"];
+    var naturezaJuridica = res["natureza_juridica"];
+    var cnae = res["atividade_principal"][0]['text'];
+    var cnae2 = res["atividade_principal"][0]['code'];
+    var capitalSocial = res["capital_social"];
+    var value = double.parse(capitalSocial);
+    var telefone = res["telefone"];
+
+    print(NumberFormat.currency(locale: 'pt-br').format(value));
+    var capitalSocialFixed =
+        NumberFormat.currency(locale: 'pt-br').format(value).toString();
+
+    var counter = 0;
+    var socios;
+
+    List<dynamic> teste = res["qsa"];
+    print('teste: $teste, ${teste.length}, (${teste.length - 1})');
+
+    while (counter <= (teste.length - 1)) {
+      nomeSocios.add(
+          '${res["qsa"][counter]['nome']} (${res["qsa"][counter]['qual']})\n\n');
+
+      counter++;
+    }
+    print('nomeSocios: $nomeSocios');
+
+
+    socios = nomeSocios.length > 0
+        ? nomeSocios
+        : 'Nao há informação do quadro de sócios e administradores (QSA) na base de dados do CNPJ ou o CNPJ possui natureza jurídica que não permite o preenchimento de QSA.';
+    // socios = teste.toString();
+
+    //setValues
+    _sociosController.text = _fixSocios(socios.toString());
+
+    _phoneController.text = telefone.toString().isNotEmpty ? telefone : 'N/D';
+
+    _capitalSocialController.text =
+        'R\$ ${capitalSocialFixed.replaceAll('BRL', '')}';
+
+    if (!cnae.toString().contains("********")) {
+      _cnaeController.text = 'Atividade Principal: $cnae \nCódigo: $cnae2';
+    } else {
+      _cnaeController.text = 'N/D';
+    }
+
+    _naturezaJuridicaController.text = naturezaJuridica;
+
+    _situacaoCadastralController.text = situacao;
+
+    _nomeController.text = fantasia.toString().isNotEmpty
+        ? 'Razão Social: $razao \n\nNome Fantasia: $fantasia'
+        : 'Razão Social: $razao';
+
+    if (logradouro.toString().isNotEmpty) {
+      _logradouroController.text =
+          'Logradouro: $logradouro \nNº: $numero \nComplemento: $complemento \nCEP: $situacaoCadastral \nBairro: $bairro \nCidade: $nome';
+    } else {
+      _logradouroController.text = 'N/D';
     }
   }
 
@@ -248,11 +248,10 @@ class _MyHomePageState extends State<MyHomePage> {
       decoration: InputDecoration(labelText: 'Natureza Jurídica'),
     );
     var txtCNAE = TextFormField(
-      maxLines: null,
-      enabled: false,
-      controller: _cnaeController,
-      decoration: InputDecoration(labelText: 'CNAE'),
-    );
+        maxLines: null,
+        enabled: false,
+        controller: _cnaeController,
+        decoration: InputDecoration(labelText: 'CNAE'));
     var txtCapitalSocial = TextFormField(
       maxLines: null,
       enabled: false,
@@ -271,12 +270,14 @@ class _MyHomePageState extends State<MyHomePage> {
       controller: _phoneController,
       decoration: InputDecoration(labelText: 'Telefone'),
     );
-    var txtCEP = TextFormField(
+    var txtSituacaoCadastral = TextFormField(
       enabled: false,
       controller: _situacaoCadastralController,
       //style: TextStyle(color: Colors.green),
       decoration: InputDecoration(labelText: 'Situação Cadastral'),
+      // style: TextStyle(color: Colors.blue),
     );
+
     var txtSocios = TextFormField(
       enabled: false,
       maxLines: null,
@@ -305,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   txtCNPJ,
-                  txtCEP,
+                  txtSituacaoCadastral,
                   txtNome,
                   txtNaturezaJuridica,
                   txtCNAE,

@@ -1,5 +1,5 @@
 name: cnpj_company
-description: A new Flutter project.
+description: Get data of companies by CNPJ
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
