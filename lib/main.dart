@@ -47,23 +47,27 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _formKeyLogin = GlobalKey<FormState>();
   final _logradouroController = TextEditingController();
-  final _numeroController = TextEditingController();
-  final _cepController = TextEditingController();
-  final _situacaoController = TextEditingController();
-  final _municipioController = TextEditingController();
-  final _fantasiaController = TextEditingController();
-  final _razaoController = TextEditingController();
-  final _complementoController = TextEditingController();
+  final _situacaoCadastralController = TextEditingController();
+  final _nomeController = TextEditingController();
+  final _naturezaJuridicaController = TextEditingController();
+  final _cnaeController = TextEditingController();
+  final _capitalSocialController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _sociosController = TextEditingController();
   final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
+  List<String> nomeSocios = [];
+  Map mapSocios = {};
 
   void _initializeFields() {
     _logradouroController.text = "";
-    _numeroController.text = "";
-    _cepController.text = "";
-    _situacaoController.text = "";
-    _municipioController.text = "";
-    _fantasiaController.text = "";
+    _situacaoCadastralController.text = "";
+    _nomeController.text = "";
+    _naturezaJuridicaController.text = "";
+    _cnaeController.text = "";
+    _capitalSocialController.text = "";
     _cnpjController.text = "";
+    _phoneController.text = "";
+    _sociosController.text = "";
   }
 
   _showMsg(String message) {
@@ -103,34 +107,78 @@ class _MyHomePageState extends State<MyHomePage> {
     if (statusCode == 'OK') {
       print('OK, $statusCode');
 
-      var logradouro = res["logradouro"];
-      _logradouroController.text = logradouro;
-
       var numero = res["numero"];
-      _numeroController.text = numero;
-
-      var cep = res["cep"];
-      _cepController.text = cep;
 
       var situacao = res["situacao"];
 
-      var municipio = res["municipio"];
-      _municipioController.text = municipio;
-
       var fantasia = res["fantasia"];
-      _fantasiaController.text = fantasia;
 
       var razao = res["nome"];
-      _razaoController.text = razao;
 
       var complemento = res["complemento"];
-      _complementoController.text = complemento;
+
+      var bairro = res["bairro"];
+
+      var situacaoCadastral = res["cep"];
+
+      var nome = res["municipio"];
+
+      var logradouro = res["logradouro"];
+
+      var naturezaJuridica = res["natureza_juridica"];
+
+      var cnae = res["atividade_principal"][0]['text'];
+      var cnae2 = res["atividade_principal"][0]['code'];
+
+      var capitalSocial = res["capital_social"];
+
+      var telefone = res["telefone"];
+
+      var counter = 0;
+      var socios;
+
+      List<dynamic> teste = res["qsa"];
+      print('teste: $teste, ${teste.length}, (${teste.length - 1})');
+
+      while (counter <= (teste.length - 1)) {
+        nomeSocios.add(
+            '${res["qsa"][counter]['nome']} (${res["qsa"][counter]['qual']})\n\n');
+
+        counter++;
+      }
+      print('nomeSocios: $nomeSocios');
+
+      socios = nomeSocios.toString();
+      // socios = teste.toString();
+
+      _sociosController.text = socios
+          .toString()
+          .replaceAll("[", "")
+          .replaceAll("]", "")
+          .replaceAll("-", " ")
+          .replaceAll(",", "");
+
+      _phoneController.text = telefone;
+
+      _capitalSocialController.text = 'R\$: $capitalSocial';
+
+      _cnaeController.text = 'Atividade Principal: $cnae \nCódigo: $cnae2';
+
+      _naturezaJuridicaController.text = naturezaJuridica;
+
+      _situacaoCadastralController.text = situacao;
+
+      _nomeController.text =
+          'Razão Social: $razao \n\nNome Fantasia: $fantasia';
+
+      _logradouroController.text =
+          'Logradouro: $logradouro \nNº: $numero \nComplemento: $complemento \nCEP: $situacaoCadastral \nBairro: $bairro \nCidade: $nome';
 
       print('logradouro: $logradouro');
-      print('cep: $cep');
+      print('cep: $situacaoCadastral');
       print('numero: $numero');
       print('situacao: $situacao');
-      print('municipio: $municipio');
+      print('municipio: $nome');
       print('fantasia: $fantasia');
     } else {
       _showMsg(res["message"]);
@@ -143,17 +191,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     _initializeFields();
 
-    var txtComplemento = TextFormField(
-      maxLines: 2,
-      enabled: false,
-      controller: _complementoController,
-      decoration: InputDecoration(labelText: 'Complemento'),
-    );
     var txtLogradouro = TextFormField(
       // key: _formKeyLogin,
+      maxLines: null,
       enabled: false,
       controller: _logradouroController,
-      decoration: InputDecoration(labelText: 'Logradouro'),
+      decoration: InputDecoration(labelText: 'Endereço'),
     );
     var txtCNPJ = TextField(
       maxLength: 18,
@@ -161,59 +204,82 @@ class _MyHomePageState extends State<MyHomePage> {
         cut: true,
         copy: true,
         selectAll: true,
-        paste: false,
+        paste: true,
       ),
       enabled: true,
       textAlign: TextAlign.center,
       keyboardType: TextInputType.numberWithOptions(),
       controller: _cnpjController,
       autofocus: true,
-      cursorColor: Colors.amber,
-      style: TextStyle(height: 1.5, fontSize: 20),
+      cursorColor: Color(0xff3CC37E), //Colors.amber,
+      style: TextStyle(
+          height: 1.5,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Color(0xff3CC37E)),
       cursorWidth: 5.0,
       //increases the height of cursor
       decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5.0),
             borderSide: BorderSide(
-              color: Colors.amber,
+              color: Color(0xff3CC37E), //Colors.amber,
               style: BorderStyle.solid,
             ),
           ),
           labelText: 'CNPJ',
           hintText: 'Digite um CNPJ'),
     );
-    var txtMunicipio = TextFormField(
+    var txtNaturezaJuridica = TextFormField(
+      maxLines: null,
       enabled: false,
-      controller: _municipioController,
-      decoration: InputDecoration(labelText: 'Munícipio'),
+      controller: _naturezaJuridicaController,
+      decoration: InputDecoration(labelText: 'Natureza Jurídica'),
+    );
+    var txtCNAE = TextFormField(
+      maxLines: null,
+      enabled: false,
+      controller: _cnaeController,
+      decoration: InputDecoration(labelText: 'CNAE'),
+    );
+    var txtCapitalSocial = TextFormField(
+      maxLines: null,
+      enabled: false,
+      controller: _capitalSocialController,
+      decoration: InputDecoration(labelText: 'Capital Social'),
+    );
+    var txtNome = TextFormField(
+      maxLines: null,
+      enabled: false,
+      controller: _nomeController,
+      decoration: InputDecoration(labelText: 'Nome'),
+    );
+    var txtPhone = TextFormField(
+      maxLines: null,
+      enabled: false,
+      controller: _phoneController,
+      decoration: InputDecoration(labelText: 'Telefone'),
     );
     var txtCEP = TextFormField(
       enabled: false,
-      controller: _cepController,
-      decoration: InputDecoration(labelText: 'CEP'),
+      controller: _situacaoCadastralController,
+      //style: TextStyle(color: Colors.green),
+      decoration: InputDecoration(labelText: 'Situação Cadastral'),
     );
-    var txtNumber = TextFormField(
+    var txtSocios = TextFormField(
       enabled: false,
-      controller: _numeroController,
-      decoration: InputDecoration(labelText: 'Nº'),
+      maxLines: null,
+      controller: _sociosController,
+      //style: TextStyle(color: Colors.green),
+      decoration: InputDecoration(labelText: 'Quadro Societário'),
     );
-    var txtNomeFantasia = TextFormField(
-      enabled: false,
-      controller: _fantasiaController,
-      decoration: InputDecoration(labelText: 'Nome Fantasia'),
-    );
-    var txtRazaoSocial = TextFormField(
-      maxLines: 2,
-      enabled: false,
-      controller: _razaoController,
-      decoration: InputDecoration(labelText: 'Razão Social'),
-    );
+
     var scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
 
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Color(0xff1E392A),
       ),
       body: Container(
         // decoration: BoxDecoration(color: Colors.white),
@@ -224,16 +290,18 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               padding: EdgeInsets.all(12.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   txtCNPJ,
-                  txtLogradouro,
-                  txtMunicipio,
                   txtCEP,
-                  txtNumber,
-                  txtNomeFantasia,
-                  txtRazaoSocial,
-                  txtComplemento,
+                  txtNome,
+                  txtNaturezaJuridica,
+                  txtCNAE,
+                  txtCapitalSocial,
+                  txtLogradouro,
+                  txtPhone,
+                  txtSocios
                 ],
               ),
             ),
@@ -243,6 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _getData,
         tooltip: 'Pesquisar',
+        backgroundColor: Color(0xff1E392A),
         child: Icon(Icons.search),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
