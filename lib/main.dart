@@ -61,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _cnpjController.text = "";
     _phoneController.text = "";
     _sociosController.text = "";
+    nomeSocios = [];
+    mapSocios = {};
   }
 
   _showMsg(String message) {
