@@ -24,6 +24,8 @@ dependencies:
   http: ^0.12.1
   flutter_masked_text: ^0.8.0
   effective_dart: ^1.2.0
+  intl: ^0.16.1
+
 
   flutter:
     sdk: flutter

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:http/http.dart' as http;
+import "package:intl/intl.dart";
 
 void main() {
   runApp(MyApp());
@@ -52,9 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
   final _naturezaJuridicaController = TextEditingController();
   final _cnaeController = TextEditingController();
   final _capitalSocialController = TextEditingController();
+  // MoneyMaskedTextController(decimalSeparator: '.', thousandSeparator: ',');
   final _phoneController = TextEditingController();
   final _sociosController = TextEditingController();
   final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
+
   List<String> nomeSocios = [];
   Map mapSocios = {};
 
@@ -132,6 +135,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
       var capitalSocial = res["capital_social"];
 
+      var value = double.parse(capitalSocial);
+      // capitalSocial = value
+
+      print(NumberFormat.currency(locale: 'pt-br').format(value));
+      var capitalSocialFixed =
+          NumberFormat.currency(locale: 'pt-br').format(value).toString();
+
       var telefone = res["telefone"];
 
       var counter = 0;
@@ -160,7 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
       _phoneController.text = telefone;
 
-      _capitalSocialController.text = 'R\$: $capitalSocial';
+      _capitalSocialController.text =
+          'R\$ ${capitalSocialFixed.replaceAll('BRL', '')}';
 
       _cnaeController.text = 'Atividade Principal: $cnae \nCódigo: $cnae2';
 
