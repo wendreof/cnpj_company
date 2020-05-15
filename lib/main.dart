@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:http/http.dart' as http;
 import "package:intl/intl.dart";
+
+import 'cnpj.dart';
 import 'contants.dart' as constants;
 
 void main() {
@@ -11,25 +13,12 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Pesquisa CNPJ'),
@@ -54,11 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   final _naturezaJuridicaController = TextEditingController();
   final _cnaeController = TextEditingController();
   final _capitalSocialController = TextEditingController();
-  // MoneyMaskedTextController(decimalSeparator: '.', thousandSeparator: ',');
   final _phoneController = TextEditingController();
   final _sociosController = TextEditingController();
   final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
-  String situacaoCadastral;
+  Cnpj cnpj = Cnpj();
 
   List<String> nomeSocios = [];
   Map mapSocios = {};
@@ -84,27 +72,9 @@ class _MyHomePageState extends State<MyHomePage> {
     Scaffold.of(_formKeyLogin.currentState.context).showSnackBar(snackBar);
   }
 
-  String _fixCNPJ(String cnpj) {
-    cnpj = cnpj
-        .replaceAll('.', '')
-        .replaceAll('/', '')
-        .replaceAll('-', '')
-        .replaceAll(',', '');
-    return cnpj;
-  }
-
-  String _fixSocios(String socios) {
-    socios = socios
-        .replaceAll("[", "")
-        .replaceAll("]", "")
-        .replaceAll("-", " ")
-        .replaceAll(",", "");
-    return socios;
-  }
-
   void _getData() async {
     http.Response response;
-    var cnpjFixed = _fixCNPJ(_cnpjController.text);
+    var cnpjFixed = cnpj.fixCNPJ(_cnpjController.text);
 
     print('${constants.url}$cnpjFixed');
 
@@ -118,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (statusCode == 'OK') {
       print('OK, $statusCode');
-      _setValues(res);
+      _getValues(res);
     } else {
       _showMsg(res["message"]);
       _initializeFields();
@@ -126,27 +96,30 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _setValues(Map<String, dynamic> res) {
-    //get values
-    var numero = res["numero"];
-    var situacao = res["situacao"];
-    var fantasia = res["fantasia"];
-    var razao = res["nome"];
-    var complemento = res["complemento"];
-    var bairro = res["bairro"];
-    situacaoCadastral = res["cep"];
-    var nome = res["municipio"];
-    var logradouro = res["logradouro"];
-    var naturezaJuridica = res["natureza_juridica"];
-    var cnae = res["atividade_principal"][0]['text'];
-    var cnae2 = res["atividade_principal"][0]['code'];
-    var capitalSocial = res["capital_social"];
-    var value = double.parse(capitalSocial);
-    var telefone = res["telefone"];
+  void _getValues(Map<String, dynamic> res) {
+    cnpj.numero = res["numero"];
+    cnpj.situacao = res["situacao"];
+    cnpj.fantasia = res["fantasia"];
+    cnpj.razao = res["nome"];
+    cnpj.complemento = res["complemento"];
+    cnpj.bairro = res["bairro"];
+    cnpj.situacaoCadastral = res["cep"];
+    cnpj.nome = res["municipio"];
+    cnpj.logradouro = res["logradouro"];
+    cnpj.naturezaJuridica = res["natureza_juridica"];
+    cnpj.cnae = res["atividade_principal"][0]['text'];
+    cnpj.cnae2 = res["atividade_principal"][0]['code'];
+    cnpj.capitalSocial = res["capital_social"];
+    cnpj.value = double.parse(cnpj.capitalSocial);
+    cnpj.telefone = res["telefone"];
 
-    print(NumberFormat.currency(locale: 'pt-br').format(value));
+    _setValues(cnpj, res);
+  }
+
+  void _setValues(Cnpj cnpj, Map<String, dynamic> res) {
+    print(NumberFormat.currency(locale: 'pt-br').format(cnpj.value));
     var capitalSocialFixed =
-        NumberFormat.currency(locale: 'pt-br').format(value).toString();
+        NumberFormat.currency(locale: 'pt-br').format(cnpj.value).toString();
 
     var counter = 0;
     var socios;
@@ -162,37 +135,35 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     print('nomeSocios: $nomeSocios');
 
-
-    socios = nomeSocios.length > 0
-        ? nomeSocios
-        : 'Nao há informação do quadro de sócios e administradores (QSA) na base de dados do CNPJ ou o CNPJ possui natureza jurídica que não permite o preenchimento de QSA.';
+    socios = nomeSocios.length > 0 ? nomeSocios : constants.qsaNull;
     // socios = teste.toString();
 
-    //setValues
-    _sociosController.text = _fixSocios(socios.toString());
+    _sociosController.text = cnpj.fixSocios(socios.toString());
 
-    _phoneController.text = telefone.toString().isNotEmpty ? telefone : 'N/D';
+    _phoneController.text =
+        cnpj.telefone.toString().isNotEmpty ? cnpj.telefone : 'N/D';
 
     _capitalSocialController.text =
         'R\$ ${capitalSocialFixed.replaceAll('BRL', '')}';
 
-    if (!cnae.toString().contains("********")) {
-      _cnaeController.text = 'Atividade Principal: $cnae \nCódigo: $cnae2';
+    if (!cnpj.cnae.toString().contains("********")) {
+      _cnaeController.text =
+          'Atividade Principal: ${cnpj.cnae} \nCódigo: ${cnpj.cnae2}';
     } else {
       _cnaeController.text = 'N/D';
     }
 
-    _naturezaJuridicaController.text = naturezaJuridica;
+    _naturezaJuridicaController.text = cnpj.naturezaJuridica;
 
-    _situacaoCadastralController.text = situacao;
+    _situacaoCadastralController.text = cnpj.situacao;
 
-    _nomeController.text = fantasia.toString().isNotEmpty
-        ? 'Razão Social: $razao \n\nNome Fantasia: $fantasia'
-        : 'Razão Social: $razao';
+    _nomeController.text = cnpj.fantasia.toString().isNotEmpty
+        ? 'Razão Social: ${cnpj.razao} \n\nNome Fantasia: ${cnpj.fantasia}'
+        : 'Razão Social: ${cnpj.razao}';
 
-    if (logradouro.toString().isNotEmpty) {
+    if (cnpj.logradouro.toString().isNotEmpty) {
       _logradouroController.text =
-          'Logradouro: $logradouro \nNº: $numero \nComplemento: $complemento \nCEP: $situacaoCadastral \nBairro: $bairro \nCidade: $nome';
+          'Logradouro: ${cnpj.logradouro} \nNº: ${cnpj.numero} \nComplemento: ${cnpj.complemento} \nCEP: ${cnpj.situacaoCadastral} \nBairro: ${cnpj.bairro} \nCidade: ${cnpj.nome}';
     } else {
       _logradouroController.text = 'N/D';
     }
@@ -277,7 +248,6 @@ class _MyHomePageState extends State<MyHomePage> {
       decoration: InputDecoration(labelText: 'Situação Cadastral'),
       // style: TextStyle(color: Colors.blue),
     );
-
     var txtSocios = TextFormField(
       enabled: false,
       maxLines: null,
@@ -285,7 +255,6 @@ class _MyHomePageState extends State<MyHomePage> {
       //style: TextStyle(color: Colors.green),
       decoration: InputDecoration(labelText: 'Quadro Societário'),
     );
-
     var scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
 
