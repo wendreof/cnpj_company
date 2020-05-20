@@ -1,12 +1,30 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'src/views/myHomePage.dart';
 
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyHomePage(
+        title: 'Pesquisa CNPJ',
+      ),
+    )
+  );
+}
+
+
+
+
+
+/*import 'dart:convert';
+
+import "package:intl/intl.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:http/http.dart' as http;
-import "package:intl/intl.dart";
 
-import 'cnpj.dart';
-import 'contants.dart' as constants;
+import 'src/model/cnpj.dart';
+import 'src/util/contants.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,7 +38,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+       // visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'Pesquisa CNPJ'),
     );
@@ -37,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   final _formKeyLogin = GlobalKey<FormState>();
   final _logradouroController = TextEditingController();
   final _situacaoCadastralController = TextEditingController();
@@ -48,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _sociosController = TextEditingController();
   final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
   Cnpj cnpj = Cnpj();
+
 
   List<String> nomeSocios = [];
   Map mapSocios = {};
@@ -319,3 +339,4 @@ class _MyHomePageState extends State<MyHomePage> {
     return scaffold;
   }
 }
+*/
