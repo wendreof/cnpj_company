@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -51,6 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String> nomeSocios = [];
   Map mapSocios = {};
 
+  var _validate = false;
+
   void _initializeFields() {
     _logradouroController.text = "";
     _situacaoCadastralController.text = "";
@@ -58,7 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _naturezaJuridicaController.text = "";
     _cnaeController.text = "";
     _capitalSocialController.text = "";
-    _cnpjController.text = "";
+    if (_validate == true) {
+      _cnpjController.text = "";
+    }
     _phoneController.text = "";
     _sociosController.text = "";
     nomeSocios = [];
@@ -99,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getValues(Map<String, dynamic> res) {
+    cnpj.cnpj = res['cnpj'];
     cnpj.numero = res["numero"];
     cnpj.situacao = res["situacao"];
     cnpj.fantasia = res["fantasia"];
@@ -167,6 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       _logradouroController.text = 'N/D';
     }
+
+    _cnpjController.text = cnpj.cnpj;
   }
 
   @override
@@ -210,6 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           labelText: 'CNPJ',
+          errorText:
+              _validate == true ? 'Informe um CNPJ válido por favor!' : null,
           hintText: 'Digite um CNPJ'),
     );
     var txtNaturezaJuridica = TextFormField(
@@ -290,7 +300,17 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _getData,
+        onPressed: () {
+          setState(() {
+            if (_cnpjController.text.isEmpty ||
+                _cnpjController.text.length != 18) {
+              _validate = true;
+            } else {
+              _validate = false;
+              _getData();
+            }
+          });
+        },
         tooltip: 'Pesquisar',
         backgroundColor: Color(0xff1E392A),
         child: Icon(Icons.search),

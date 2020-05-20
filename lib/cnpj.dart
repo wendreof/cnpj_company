@@ -1,4 +1,5 @@
 class Cnpj {
+  String cnpj;
   String numero;
   String situacao;
   String fantasia;
