@@ -4,6 +4,7 @@ import "package:intl/intl.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:http/http.dart' as http;
+import 'package:day_night_switcher/day_night_switcher.dart';
 
 import '../model/cnpj.dart';
 import '../util/contants.dart' as constants;
@@ -18,7 +19,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   final _formKeyLogin = GlobalKey<FormState>();
   final _logradouroController = TextEditingController();
   final _situacaoCadastralController = TextEditingController();
@@ -31,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
   Cnpj cnpj = Cnpj();
 
+  bool isDarkModeEnabled = false;
 
   List<String> nomeSocios = [];
   Map mapSocios = {};
@@ -105,7 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
     cnpj.telefone = res["telefone"];
 
     _setValues(cnpj, res);
-    
   }
 
   void _setValues(Cnpj cnpj, Map<String, dynamic> res) {
@@ -249,6 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //style: TextStyle(color: Colors.green),
       decoration: InputDecoration(labelText: 'Quadro Societário'),
     );
+
     var scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
 
@@ -256,11 +257,20 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         actions: <Widget>[
           IconButton(
-              icon: Icon(
-                Icons.print,
-                color: Colors.white,
-              ), 
-              onPressed: () {},
+            icon: Icon(
+              Icons.print,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              DayNightSwitcherIcon(
+                isDarkModeEnabled: isDarkModeEnabled,
+                onStateChanged: (isDarkModeEnabled) {
+                  setState(() {
+                    this.isDarkModeEnabled = isDarkModeEnabled;
+                  });
+                },
+              );
+            },
           )
         ],
         backgroundColor: Color(0xff1E392A),
@@ -307,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Pesquisar',
         backgroundColor: Color(0xff1E392A),
         child: Icon(Icons.search),
-      ), 
+      ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
     return scaffold;

@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'src/views/myHomePage.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyHomePage(
-        title: 'Pesquisa CNPJ',
-      ),
-    )
-  );
+  runApp(MaterialApp(
+    theme: ThemeData.dark(),
+    darkTheme: ThemeData.dark().copyWith(
+      appBarTheme: AppBarTheme(color: const Color(0xFF253341)),
+      scaffoldBackgroundColor: const Color(0xFF15202B),
+    ),
+    debugShowCheckedModeBanner: false,
+    home: MyHomePage(
+      title: 'Pesquisa CNPJ',
+    ),
+  ));
 }
-
-
-
-
 
 /*import 'dart:convert';
 

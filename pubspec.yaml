@@ -5,18 +5,18 @@ description: Get data of companies by CNPJ
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  pdf: ^1.8.0  # Generate PDF
-  http: ^0.12.1
+  pdf: ^1.8.0 # Generate PDF
+  http: ^0.12.2
   flutter_masked_text: ^0.8.0
-  effective_dart: ^1.2.0
+  effective_dart: ^1.3.0
   intl: ^0.16.1
   flutter_launcher_icons: ^0.7.5
   flutter_launcher_name: ^0.0.1
+  day_night_switcher: ^0.1.1+1
 
 flutter_launcher_name:
   name: "CNPJ"
@@ -58,7 +58,7 @@ flutter:
         - asset: fonts/RobotoSlab-Regular.ttf
     - family: Roboto Slab Bold
       fonts:
-        - asset: fonts/RobotoSlab-Bold.ttf   
+        - asset: fonts/RobotoSlab-Bold.ttf
     - family: Roboto Slab Light
       fonts:
-        - asset: fonts/RobotoSlab-Light.ttf   
+        - asset: fonts/RobotoSlab-Light.ttf
