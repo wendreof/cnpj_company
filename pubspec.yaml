@@ -6,17 +6,16 @@ description: Get data of companies by CNPJ
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  pdf: ^1.8.0 # Generate PDF
-  http: ^0.12.2
-  flutter_masked_text: ^0.8.0
-  effective_dart: ^1.3.0
-  intl: ^0.16.1
+  http: ^0.13.3
+  dio: ^4.0.0
+  intl: ^0.17.0
   flutter_launcher_icons: ^0.7.5
   flutter_launcher_name: ^0.0.1
-  day_night_switcher: ^0.1.1+1
+  day_night_switcher: ^0.2.0+1
+  mask_text_input_formatter: ^2.0.0
 
 flutter_launcher_name:
   name: "CNPJ"
@@ -29,6 +28,7 @@ flutter_launcher_name:
   cupertino_icons: ^0.1.3
 
 dev_dependencies:
+  effective_dart: ^1.3.2
   flutter_test:
     sdk: flutter
 

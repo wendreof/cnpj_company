@@ -1,16 +1,14 @@
-import 'dart:convert' show json;
-
-import "package:intl/intl.dart";
-import 'package:flutter/material.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:http/http.dart' as http;
 import 'package:day_night_switcher/day_night_switcher.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../../controllers/cnpj_controller.dart';
 import '../model/cnpj.dart';
 import '../util/contants.dart' as constants;
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({required this.title, Key? key}) : super(key: key);
 
   final String title;
 
@@ -19,6 +17,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _controller = CnpjController();
   final _formKeyLogin = GlobalKey<FormState>();
   final _logradouroController = TextEditingController();
   final _situacaoCadastralController = TextEditingController();
@@ -28,8 +27,10 @@ class _MyHomePageState extends State<MyHomePage> {
   final _capitalSocialController = TextEditingController();
   final _phoneController = TextEditingController();
   final _sociosController = TextEditingController();
-  final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
-  Cnpj cnpj = Cnpj();
+  //final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
+  final _cnpjController = TextEditingController();
+  var maskFormatter = MaskTextInputFormatter(
+      mask: '##.###.###/####-##', filter: {'#': RegExp(r'[0-9]')});
 
   bool isDarkModeEnabled = false;
 
@@ -38,92 +39,66 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _validate = false;
 
-  void _initializeFields() {
-    _logradouroController.text = "";
-    _situacaoCadastralController.text = "";
-    _nomeController.text = "";
-    _naturezaJuridicaController.text = "";
-    _cnaeController.text = "";
-    _capitalSocialController.text = "";
-    if (_validate == true) {
-      _cnpjController.text = "";
-    }
-    _phoneController.text = "";
-    _sociosController.text = "";
-    nomeSocios = [];
-    mapSocios = {};
-  }
-
   _showMsg(String message) {
     final snackBar = SnackBar(
         duration: Duration(seconds: 5),
         content: Text(
           message,
         ));
-    Scaffold.of(_formKeyLogin.currentState.context).showSnackBar(snackBar);
+    Scaffold.of(_formKeyLogin.currentState!.context).showSnackBar(snackBar);
   }
 
   void _getData() async {
-    http.Response response;
-    var cnpjFixed = cnpj.fixCNPJ(_cnpjController.text);
+    var response = await _controller.getData(_cnpjController.text);
 
-    print('${constants.url}$cnpjFixed');
-
-    response = await http.get('${constants.url}$cnpjFixed');
-
-    print('response.body GET_CNPJ: ${response.body}');
-
-    Map<String, dynamic> res = json.decode(response.body);
-
-    var statusCode = res['status'];
+    var statusCode = 'OK';
 
     if (statusCode == 'OK') {
-      print('OK, $statusCode');
-      _getValues(res);
+      _getValues(response);
     } else {
-      _showMsg(res["message"]);
-      _initializeFields();
+      //_showMsg(res["message"]);
+
       print('Error, $statusCode');
     }
   }
 
-  void _getValues(Map<String, dynamic> res) {
-    cnpj.cnpj = res['cnpj'];
-    cnpj.numero = res["numero"];
-    cnpj.situacao = res["situacao"];
-    cnpj.fantasia = res["fantasia"];
-    cnpj.razao = res["nome"];
-    cnpj.complemento = res["complemento"];
-    cnpj.bairro = res["bairro"];
-    cnpj.situacaoCadastral = res["cep"];
-    cnpj.nome = res["municipio"];
-    cnpj.logradouro = res["logradouro"];
-    cnpj.naturezaJuridica = res["natureza_juridica"];
-    cnpj.cnae = res["atividade_principal"][0]['text'];
-    cnpj.cnae2 = res["atividade_principal"][0]['code'];
-    cnpj.capitalSocial = res["capital_social"];
-    cnpj.value = double.parse(cnpj.capitalSocial);
-    cnpj.telefone = res["telefone"];
+  void _getValues(Cnpj res) {
+    // cnpj.cnpj = res['cnpj'];
+    // cnpj.numero = res['numero'];
+    // cnpj.situacao = res['situacao'];
+    // cnpj.fantasia = res['fantasia'];
+    // cnpj.razao = res['nome'];
+    // cnpj.complemento = res['complemento'];
+    // cnpj.bairro = res['bairro'];
+    // cnpj.situacaoCadastral = res['cep'];
+    // cnpj.nome = res['municipio'];
+    // cnpj.logradouro = res['logradouro'];
+    // cnpj.naturezaJuridica = res['natureza_juridica'];
+    // cnpj.cnae = res['atividade_principal'][0]['text'];
+    // cnpj.cnae2 = res['atividade_principal'][0]['code'];
+    // cnpj.capitalSocial = res['capital_social'];
+    // cnpj.value = double.parse(cnpj.capitalSocial);
+    // cnpj.telefone = res['telefone'];
 
-    _setValues(cnpj, res);
+    _setValues(res);
   }
 
-  void _setValues(Cnpj cnpj, Map<String, dynamic> res) {
+  void _setValues(Cnpj cnpj) {
     var counter = 0;
     var socios;
     // print(NumberFormat.currency(locale: 'pt-br').format(cnpj.value));
     var capitalSocialFixed =
         NumberFormat.currency(locale: 'pt-br').format(cnpj.value).toString();
 
-    List<dynamic> teste = res["qsa"];
+    //List<dynamic> teste = res["qsa"];
     //print('teste: $teste, ${teste.length}, (${teste.length - 1})');
 
-    while (counter <= (teste.length - 1)) {
-      nomeSocios.add(
-          '${res["qsa"][counter]['nome']} (${res["qsa"][counter]['qual']})\n\n');
+    // while (counter <= (teste.length - 1)) {
+    //   nomeSocios.add(
+    //       '${res["qsa"][counter]['nome']} (${res["qsa"][counter]['qual']})\n\n');
 
-      counter++;
-    }
+    //   counter++;
+    // }
     //  print('nomeSocios: $nomeSocios');
     socios = nomeSocios.length > 0 ? nomeSocios : constants.qsaNull;
     // socios = teste.toString();
@@ -136,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _capitalSocialController.text =
         'R\$ ${capitalSocialFixed.replaceAll('BRL', '')}';
 
-    if (!cnpj.cnae.toString().contains("********")) {
+    if (!cnpj.cnae.toString().contains('********')) {
       _cnaeController.text =
           'Atividade Principal: ${cnpj.cnae} \nCódigo: ${cnpj.cnae2}';
     } else {
@@ -163,16 +138,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _initializeFields();
-
-    var txtLogradouro = TextFormField(
+    final txtLogradouro = TextFormField(
       // key: _formKeyLogin,
       maxLines: null,
       enabled: false,
       controller: _logradouroController,
       decoration: InputDecoration(labelText: 'Endereço'),
     );
-    var txtCNPJ = TextField(
+    final txtCNPJ = TextField(
+      inputFormatters: [maskFormatter],
       maxLength: 18,
       toolbarOptions: ToolbarOptions(
         cut: true,
@@ -206,43 +180,43 @@ class _MyHomePageState extends State<MyHomePage> {
               _validate == true ? 'Informe um CNPJ válido por favor!' : null,
           hintText: 'Digite um CNPJ'),
     );
-    var txtNaturezaJuridica = TextFormField(
+    final txtNaturezaJuridica = TextFormField(
       maxLines: null,
       enabled: false,
       controller: _naturezaJuridicaController,
       decoration: InputDecoration(labelText: 'Natureza Jurídica'),
     );
-    var txtCNAE = TextFormField(
+    final txtCNAE = TextFormField(
         maxLines: null,
         enabled: false,
         controller: _cnaeController,
         decoration: InputDecoration(labelText: 'CNAE'));
-    var txtCapitalSocial = TextFormField(
+    final txtCapitalSocial = TextFormField(
       maxLines: null,
       enabled: false,
       controller: _capitalSocialController,
       decoration: InputDecoration(labelText: 'Capital Social'),
     );
-    var txtNome = TextFormField(
+    final txtNome = TextFormField(
       maxLines: null,
       enabled: false,
       controller: _nomeController,
       decoration: InputDecoration(labelText: 'Nome'),
     );
-    var txtPhone = TextFormField(
+    final txtPhone = TextFormField(
       maxLines: null,
       enabled: false,
       controller: _phoneController,
       decoration: InputDecoration(labelText: 'Telefone'),
     );
-    var txtSituacaoCadastral = TextFormField(
+    final txtSituacaoCadastral = TextFormField(
       enabled: false,
       controller: _situacaoCadastralController,
       //style: TextStyle(color: Colors.green),
       decoration: InputDecoration(labelText: 'Situação Cadastral'),
       // style: TextStyle(color: Colors.blue),
     );
-    var txtSocios = TextFormField(
+    final txtSocios = TextFormField(
       enabled: false,
       maxLines: null,
       controller: _sociosController,
@@ -250,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
       decoration: InputDecoration(labelText: 'Quadro Societário'),
     );
 
-    var scaffold = Scaffold(
+    final scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
 
       appBar: AppBar(
