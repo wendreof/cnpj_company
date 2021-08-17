@@ -2,6 +2,7 @@ import 'package:day_night_switcher/day_night_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:snack/snack.dart';
 
 import '../../controllers/cnpj_controller.dart';
 import '../model/cnpj.dart';
@@ -27,9 +28,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final _capitalSocialController = TextEditingController();
   final _phoneController = TextEditingController();
   final _sociosController = TextEditingController();
-  //final _cnpjController = MaskedTextController(mask: '00.000.000/0000-00');
   final _cnpjController = TextEditingController();
-  var maskFormatter = MaskTextInputFormatter(
+  final maskFormatter = MaskTextInputFormatter(
       mask: '##.###.###/####-##', filter: {'#': RegExp(r'[0-9]')});
 
   bool isDarkModeEnabled = false;
@@ -39,56 +39,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var _validate = false;
 
-  _showMsg(String message) {
-    final snackBar = SnackBar(
-        duration: Duration(seconds: 5),
-        content: Text(
-          message,
-        ));
-    Scaffold.of(_formKeyLogin.currentState!.context).showSnackBar(snackBar);
-  }
-
   void _getData() async {
-    var response = await _controller.getData(_cnpjController.text);
+    final cnpj = await _controller.getData(_cnpjController.text);
 
-    var statusCode = 'OK';
-
-    if (statusCode == 'OK') {
-      _getValues(response);
+    if (cnpj.status == 'OK') {
+      _setValues(cnpj);
     } else {
-      //_showMsg(res["message"]);
-
-      print('Error, $statusCode');
+      _error(cnpj.message, context);
     }
   }
 
-  void _getValues(Cnpj res) {
-    // cnpj.cnpj = res['cnpj'];
-    // cnpj.numero = res['numero'];
-    // cnpj.situacao = res['situacao'];
-    // cnpj.fantasia = res['fantasia'];
-    // cnpj.razao = res['nome'];
-    // cnpj.complemento = res['complemento'];
-    // cnpj.bairro = res['bairro'];
-    // cnpj.situacaoCadastral = res['cep'];
-    // cnpj.nome = res['municipio'];
-    // cnpj.logradouro = res['logradouro'];
-    // cnpj.naturezaJuridica = res['natureza_juridica'];
-    // cnpj.cnae = res['atividade_principal'][0]['text'];
-    // cnpj.cnae2 = res['atividade_principal'][0]['code'];
-    // cnpj.capitalSocial = res['capital_social'];
-    // cnpj.value = double.parse(cnpj.capitalSocial);
-    // cnpj.telefone = res['telefone'];
-
-    _setValues(res);
+  void _error(String errorMsg, context) {
+    final message = SnackBar(content: Text(errorMsg));
+    message.show(context);
   }
 
   void _setValues(Cnpj cnpj) {
-    var counter = 0;
     var socios;
-    // print(NumberFormat.currency(locale: 'pt-br').format(cnpj.value));
-    var capitalSocialFixed =
-        NumberFormat.currency(locale: 'pt-br').format(cnpj.value).toString();
+    final capitalSocial =
+        NumberFormat.currency(locale: 'pt-br').format(cnpj.capitalSocial);
 
     //List<dynamic> teste = res["qsa"];
     //print('teste: $teste, ${teste.length}, (${teste.length - 1})');
@@ -100,38 +69,38 @@ class _MyHomePageState extends State<MyHomePage> {
     //   counter++;
     // }
     //  print('nomeSocios: $nomeSocios');
-    socios = nomeSocios.length > 0 ? nomeSocios : constants.qsaNull;
+    socios = nomeSocios.isNotEmpty ? nomeSocios : constants.qsaNull;
     // socios = teste.toString();
 
     _sociosController.text = cnpj.fixSocios(socios.toString());
 
-    _phoneController.text =
-        cnpj.telefone.toString().isNotEmpty ? cnpj.telefone : 'N/D';
+    _phoneController.text = 'Telefone: ${cnpj.telefone}\nE-mail: ${cnpj.email}';
 
     _capitalSocialController.text =
-        'R\$ ${capitalSocialFixed.replaceAll('BRL', '')}';
+        'R\$ ${capitalSocial.replaceAll('BRL', '')}';
 
-    if (!cnpj.cnae.toString().contains('********')) {
-      _cnaeController.text =
-          'Atividade Principal: ${cnpj.cnae} \nCódigo: ${cnpj.cnae2}';
+    if (cnpj.atividadePrincipal.isNotEmpty) {
+      if (cnpj.atividadePrincipal[0].text != '********') {
+        _cnaeController.text =
+            // ignore: lines_longer_than_80_chars
+            'Atividade Principal: ${cnpj.atividadePrincipal[0].text} \nCódigo: ${cnpj.atividadePrincipal[0].code}';
+      } else {
+        _cnaeController.text = '-';
+      }
     } else {
-      _cnaeController.text = 'N/D';
+      _cnaeController.text = '-';
     }
 
     _naturezaJuridicaController.text = cnpj.naturezaJuridica;
 
     _situacaoCadastralController.text = cnpj.situacao;
 
-    _nomeController.text = cnpj.fantasia.toString().isNotEmpty
-        ? 'Razão Social: ${cnpj.razao} \n\nNome Fantasia: ${cnpj.fantasia}'
-        : 'Razão Social: ${cnpj.razao}';
+    _nomeController.text =
+        'Razão Social: ${cnpj.nome} \nNome Fantasia: ${cnpj.fantasia}';
 
-    if (cnpj.logradouro.toString().isNotEmpty) {
-      _logradouroController.text =
-          'Logradouro: ${cnpj.logradouro} \nNº: ${cnpj.numero} \nComplemento: ${cnpj.complemento} \nCEP: ${cnpj.situacaoCadastral} \nBairro: ${cnpj.bairro} \nCidade: ${cnpj.nome}';
-    } else {
-      _logradouroController.text = 'N/D';
-    }
+    _logradouroController.text =
+        // ignore: lines_longer_than_80_chars
+        'Logradouro: ${cnpj.logradouro} \nNº: ${cnpj.numero} \nComplemento: ${cnpj.complemento} \nCEP: ${cnpj.cep} \nBairro: ${cnpj.bairro} \nCidade: ${cnpj.municipio}';
 
     _cnpjController.text = cnpj.cnpj;
   }
@@ -207,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
       maxLines: null,
       enabled: false,
       controller: _phoneController,
-      decoration: InputDecoration(labelText: 'Telefone'),
+      decoration: InputDecoration(labelText: 'Contato'),
     );
     final txtSituacaoCadastral = TextFormField(
       enabled: false,

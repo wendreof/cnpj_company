@@ -4,7 +4,7 @@ import '../src/model/cnpj.dart';
 class CnpjController {
   final _repository = CnpjRepository();
   Future<Cnpj> getData(String cnpj) async {
-    var response = await _repository.getData(fixCNPJ(cnpj));
+    final response = await _repository.getData(fixCNPJ(cnpj));
     return response;
   }
 }
