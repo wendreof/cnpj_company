@@ -1,8 +1,13 @@
-import 'package:day_night_switcher/day_night_switcher.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:snack/snack.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../controllers/cnpj_controller.dart';
 import '../model/cnpj.dart';
@@ -18,6 +23,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ScreenshotController screenshotController = ScreenshotController();
+
   final _controller = CnpjController();
   final _formKeyLogin = GlobalKey<FormState>();
   final _logradouroController = TextEditingController();
@@ -31,8 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final _cnpjController = TextEditingController();
   final maskFormatter = MaskTextInputFormatter(
       mask: '##.###.###/####-##', filter: {'#': RegExp(r'[0-9]')});
-
-  bool isDarkModeEnabled = false;
 
   List<String> nomeSocios = [];
   Map mapSocios = {};
@@ -201,50 +206,43 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(
-              Icons.print,
+              Icons.share,
               color: Colors.white,
             ),
-            onPressed: () {
-              DayNightSwitcherIcon(
-                isDarkModeEnabled: isDarkModeEnabled,
-                onStateChanged: (isDarkModeEnabled) {
-                  setState(() {
-                    this.isDarkModeEnabled = isDarkModeEnabled;
-                  });
-                },
-              );
-            },
+            onPressed: _share,
           )
         ],
         backgroundColor: Color(0xff1E392A),
       ),
       body: Container(
-        // decoration: BoxDecoration(color: Colors.white),
-        //  padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKeyLogin,
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  txtCNPJ,
-                  txtSituacaoCadastral,
-                  txtNome,
-                  txtNaturezaJuridica,
-                  txtCNAE,
-                  txtCapitalSocial,
-                  txtLogradouro,
-                  txtPhone,
-                  txtSocios
-                ],
+        child: Screenshot(
+          controller: screenshotController,
+          child: Form(
+            key: _formKeyLogin,
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    txtCNPJ,
+                    txtSituacaoCadastral,
+                    txtNome,
+                    txtNaturezaJuridica,
+                    txtCNAE,
+                    txtCapitalSocial,
+                    txtLogradouro,
+                    txtPhone,
+                    txtSocios
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -264,5 +262,21 @@ class _MyHomePageState extends State<MyHomePage> {
       // This trailing comma makes auto-formatting nicer for build methods.
     );
     return scaffold;
+  }
+
+  void _share() async {
+    if (!kIsWeb) {
+      await screenshotController
+          .capture(delay: const Duration(milliseconds: 10))
+          .then((image) async {
+        if (image != null) {
+          final directory = await getApplicationDocumentsDirectory();
+          final imagePath = await File('${directory.path}/image.png').create();
+          await imagePath.writeAsBytes(image);
+
+          await Share.shareFiles([imagePath.path]);
+        }
+      });
+    }
   }
 }

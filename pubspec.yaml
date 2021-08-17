@@ -14,9 +14,12 @@ dependencies:
   intl: ^0.17.0
   flutter_launcher_icons: ^0.7.5
   flutter_launcher_name: ^0.0.1
-  day_night_switcher: ^0.2.0+1
   mask_text_input_formatter: ^2.0.0
   snack: ^2.0.0
+  share_plus: ^2.1.4
+  path_provider: ^2.0.2
+  provider: ^5.0.0
+  screenshot: ^1.2.3
 
 flutter_launcher_name:
   name: "CNPJ"
