@@ -112,6 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final style = ElevatedButton.styleFrom(
+        primary: Color(0xff1E392A), textStyle: const TextStyle(fontSize: 20));
     final txtLogradouro = TextFormField(
       // key: _formKeyLogin,
       maxLines: null,
@@ -136,12 +138,18 @@ class _MyHomePageState extends State<MyHomePage> {
       cursorColor: Color(0xff3CC37E), //Colors.amber,
       style: TextStyle(
           height: 1.5,
-          fontSize: 20,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
           color: Color(0xff3CC37E)),
       cursorWidth: 5.0,
       //increases the height of cursor
       decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 5.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 3.0),
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(5.0),
             borderSide: BorderSide(
@@ -149,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: BorderStyle.solid,
             ),
           ),
-          labelText: 'CNPJ',
+          labelText: '',
           errorText:
               _validate == true ? 'Informe um CNPJ válido por favor!' : null,
           hintText: 'Digite um CNPJ'),
@@ -200,7 +208,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final scaffold = Scaffold(
       resizeToAvoidBottomInset: false,
-
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
@@ -221,12 +228,21 @@ class _MyHomePageState extends State<MyHomePage> {
             key: _formKeyLogin,
             child: SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.all(12.0),
+                padding: EdgeInsets.all(10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    txtCNPJ,
+                    SizedBox(width: double.infinity, child: txtCNPJ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 10 * 5,
+                      child: ElevatedButton(
+                        style: style,
+                        onPressed: _search,
+                        child: const Text('Pesquisar'),
+                      ),
+                    ),
                     txtSituacaoCadastral,
                     txtNome,
                     txtNaturezaJuridica,
@@ -242,26 +258,19 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            if (_cnpjController.text.isEmpty ||
-                _cnpjController.text.length != 18) {
-              _validate = true;
-            } else {
-              _validate = false;
-              _getData();
-            }
-          });
-        },
-        tooltip: 'Pesquisar',
-        backgroundColor: Color(0xff1E392A),
-        child: Icon(Icons.search),
-      ),
-      // This trailing comma makes auto-formatting nicer for build methods.
     );
     return scaffold;
+  }
+
+  void _search() {
+    setState(() {
+      if (_cnpjController.text.isEmpty || _cnpjController.text.length != 18) {
+        _validate = true;
+      } else {
+        _validate = false;
+        _getData();
+      }
+    });
   }
 
   void _share() async {
