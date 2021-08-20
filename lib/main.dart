@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'modules/cnpj/cnpj_page.dart';
+import 'modules/cnpj_module/cnpj_page.dart';
 
 void main() {
   runApp(MaterialApp(
