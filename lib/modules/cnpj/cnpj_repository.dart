@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../src/model/cnpj.dart';
-import '../src/util/contants.dart' as constants;
+import '../../models/cnpj.dart';
+import '../../utils/contants.dart' as constants;
 
 class CnpjRepository {
   Future<Cnpj> getData(dynamic cnpj) async {

@@ -1,4 +1,4 @@
-package com.example.cnpj_company
+package br.com.wendreof.cnpj
 
 import io.flutter.embedding.android.FlutterActivity
 

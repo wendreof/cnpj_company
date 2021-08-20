@@ -1,5 +1,5 @@
-import '../repositories/cnpj_repository.dart';
-import '../src/model/cnpj.dart';
+import '../../models/cnpj.dart';
+import 'cnpj_repository.dart';
 
 class CnpjController {
   final _repository = CnpjRepository();

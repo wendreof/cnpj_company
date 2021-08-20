@@ -5,24 +5,33 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:cnpj_company/modules/cnpj/cnpj_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Run app and check widgets', (tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+
+    final Widget testWidget = MediaQuery(
+        data: MediaQueryData(),
+        child: MaterialApp(home: CnpjPage(title: 'Pesquisa CNPJ')));
+
+    await tester.pumpWidget(testWidget);
 
     // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
+    expect(find.text('Pesquisa CNPJ'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Find and tap the search button.
+    expect(find.byType(ElevatedButton), findsOneWidget);
+    expect(find.byIcon(Icons.search), findsNothing);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    final btnSearch = find.text('Pesquisar');
+
+    await tester.tap(btnSearch);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.textContaining('válido'), findsOneWidget);
+    expect(find.textContaining('wendreo'), findsNothing);
   });
 }

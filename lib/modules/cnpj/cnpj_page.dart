@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -7,24 +8,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:snack/snack.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
-import '../../controllers/cnpj_controller.dart';
-import '../model/cnpj.dart';
-import '../util/contants.dart' as constants;
+import '../../models/cnpj.dart';
+import '../../utils/contants.dart' as constants;
+import 'cnpj_controller.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({required this.title, Key? key}) : super(key: key);
+class CnpjPage extends StatefulWidget {
+  CnpjPage({required this.title, Key? key}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _CnpjPageState createState() => _CnpjPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _CnpjPageState extends State<CnpjPage> {
   ScreenshotController screenshotController = ScreenshotController();
-
   final _controller = CnpjController();
   final _formKeyLogin = GlobalKey<FormState>();
   final _logradouroController = TextEditingController();
@@ -36,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _phoneController = TextEditingController();
   final _sociosController = TextEditingController();
   final _cnpjController = TextEditingController();
-  final maskFormatter = MaskTextInputFormatter(
+  final _maskFormatter = MaskTextInputFormatter(
       mask: '##.###.###/####-##', filter: {'#': RegExp(r'[0-9]')});
 
   List<String> nomeSocios = [];
@@ -115,15 +114,15 @@ class _MyHomePageState extends State<MyHomePage> {
     final style = ElevatedButton.styleFrom(
         primary: Color(0xff1E392A), textStyle: const TextStyle(fontSize: 20));
     final txtLogradouro = TextFormField(
-      // key: _formKeyLogin,
       maxLines: null,
       enabled: false,
       controller: _logradouroController,
       decoration: InputDecoration(labelText: 'Endereço'),
     );
     final txtCNPJ = TextField(
-      inputFormatters: [maskFormatter],
+      inputFormatters: [_maskFormatter],
       maxLength: 18,
+      maxLines: 1,
       toolbarOptions: ToolbarOptions(
         cut: true,
         copy: true,
@@ -157,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: BorderStyle.solid,
             ),
           ),
-          labelText: '',
+          labelText: 'CNPJ',
           errorText:
               _validate == true ? 'Informe um CNPJ válido por favor!' : null,
           hintText: 'Digite um CNPJ'),
