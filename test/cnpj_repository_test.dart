@@ -12,30 +12,24 @@ import 'cnpj_repository_test.mocks.dart';
 @GenerateMocks([http.Client])
 void main() {
   final x = CnpjRepository();
-  group('getData2', () {
+  group('getCnpj', () {
     test('returns an CNPJ if the http call completes successfully', () async {
       final client = MockClient();
 
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1')))
-          .thenAnswer((_) async =>
-              http.Response('{"userId": 1, "id": 2, "title": "mock"}', 200));
-
-      expect(await x.getData(client, '05929714000100'), isA<Cnpj>());
+      when(await x.getCnpj(client, '05929714000100').then((response) {
+        expect(response, isA<Cnpj>());
+        expect('OK', response.status);
+        expect('05.929.714/0001-00', response.cnpj);
+        expect(response.nome, isA<String>());
+      }));
     });
 
-    test('throws an exception if the http call completes with an error', () {
+    // ignore: lines_longer_than_80_chars
+    test('throws an exception if the http call completes with an error',
+        () async {
       final client = MockClient();
 
-      // Use Mockito to return an unsuccessful response when it calls the
-      // provided http.Client.
-      when(client
-              .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1')))
-          .thenAnswer((_) async => http.Response('Not Found', 404));
-
-      expect(x.getData(client, ''), throwsException);
+      expect(x.getCnpj(client, ''), throwsException);
     });
   });
 }
