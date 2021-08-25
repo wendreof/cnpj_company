@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:load/load.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -44,8 +45,9 @@ class _CnpjPageState extends State<CnpjPage> {
   var _validate = false;
 
   void _getData() async {
+    showLoadingDialog(tapDismiss: false);
     final cnpj = await _controller.getData(_cnpjController.text);
-
+    hideLoadingDialog();
     if (cnpj.status == 'OK') {
       _setValues(cnpj);
     } else {
