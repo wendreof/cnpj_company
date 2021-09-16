@@ -28,7 +28,7 @@ jobs:
         with:
           flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
-      - run: flutter analyze
+      #- run: flutter analyze
       - run: flutter test
       - run: flutter build apk --debug
       - uses: ncipollo/release-action@v1
