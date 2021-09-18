@@ -3,8 +3,8 @@ name: CI/CD
 on:
   push:
     branches:
-        - develop
-        - master
+      - develop
+      - master
     # pull_request:
     #   branches:
     #     - develop
@@ -26,7 +26,8 @@ jobs:
           java-version: ${{env.JAVA_VERSION}}
       - uses: subosito/flutter-action@v1
         with:
-          channel: "stable"
+          channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
       #- run: flutter analyze
       - run: flutter format --dry-run --set-exit-if-changed lib/
@@ -51,9 +52,10 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build ios --release --no-codesign    
+      - run: flutter build ios --release --no-codesign
 
   build_appbundle:
     name: Build BUNDLE Android
@@ -67,6 +69,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
       - run: flutter clean
       - run: flutter build appbundle
@@ -75,33 +78,39 @@ jobs:
         with:
           name: appbundle
           path: build/app/outputs/bundle/release/app-release.aab
-          
+
   build_apk:
-      name: Build APK Android
-      needs: [flutter_test]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - uses: actions/setup-java@v1
-          with:
-            java-version: ${{env.JAVA_VERSION}}
-        - uses: subosito/flutter-action@v1
-          with:
-            channel: ${{env.FLUTTER_CHANNEL}}
-        - run: flutter pub get
-        - run: flutter clean
-        - run: flutter build apk
-        - name: Upload apk
-          uses: actions/upload-artifact@v2.1.4
-          with:
-            name: apk
-            path: build/app/outputs/flutter-apk/app-release.apk
+    name: Build APK Android
+    needs: [flutter_test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
+      - run: flutter pub get
+      - run: flutter clean
+      - run: flutter build apk
+      - name: Upload apk
+        uses: actions/upload-artifact@v2.1.4
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
   build_web:
     name: Build for Web
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{env.FLUTTER_CHANNEL}}
+          flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
-      - run: flutter clean
-      - run: flutter build web      
+      - run: flutter test
+      - run: flutter build web
