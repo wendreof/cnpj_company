@@ -29,7 +29,7 @@ jobs:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
-      #- run: flutter analyze
+      - run: flutter analyze
       - run: flutter format --dry-run --set-exit-if-changed lib/
       - run: flutter format --dry-run --set-exit-if-changed test/
       - run: flutter test --coverage
@@ -44,7 +44,7 @@ jobs:
           min_coverage: 0
 
   build_ios:
-    name: Build iOS
+    name: Build Flutter iOS
     needs: [flutter_test]
     runs-on: macos-latest
     steps:
@@ -58,7 +58,7 @@ jobs:
       - run: flutter build ios --release --no-codesign
 
   build_appbundle:
-    name: Build BUNDLE Android
+    name: Build Flutter APPBUNDLE Android
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -80,7 +80,7 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
 
   build_apk:
-    name: Build APK Android
+    name: Build Flutter APK Android
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -102,7 +102,7 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
 
   build_web:
-    name: Build for Web
+    name: Build Flutter WEB
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
