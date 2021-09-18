@@ -54,7 +54,7 @@ jobs:
       - run: flutter build ios --release --no-codesign    
 
   build_appbundle:
-    name: Build Flutter (Android)
+    name: Build Flutter (BUNDLE Android)
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -73,3 +73,25 @@ jobs:
         with:
           name: appbundle
           path: build/app/outputs/bundle/release/app-release.aab
+          
+  build_apk:
+      name: Build Flutter (APK Android)
+      needs: [flutter_test]
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-java@v1
+          with:
+            java-version: "12.x"
+        - uses: subosito/flutter-action@v1
+          with:
+            channel: "stable"
+        - run: flutter pub get
+        - run: flutter clean
+        - run: flutter build apk
+        - name: Upload apk
+          uses: actions/upload-artifact@v2.1.4
+          with:
+            name: appbundle
+            path: build/app/outputs/bundle/release/app-release.apk
+
