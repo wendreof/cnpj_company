@@ -9,9 +9,4 @@ void main() {
     expect(cnjController.fixCNPJ(''), '');
     expect(cnjController.fixCNPJ('05/92-971.400.0100'), '05929714000100');
   });
-
-  test('Verity thats getData is ok', () async {
-    expect(await cnjController.getData('05929714000100'), isA<Cnpj>());
-    expect(await cnjController.fixCNPJ(''), throwsException);
-  });
 }
