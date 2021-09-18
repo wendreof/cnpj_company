@@ -97,13 +97,11 @@ jobs:
             name: apk
             path: build/app/outputs/flutter-apk/app-release.apk
 
-  build_web:
-    name: Build for Web
-      needs: [flutter_test]
-      runs-on: ubuntu-latest
-      steps:
-        - run: flutter pub get
-        - run: flutter clean
-        - run: flutter build web
-
-
+  # build_web:
+  #   name: Build for Web
+  #     needs: [flutter_test]
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - run: flutter pub get
+  #       - run: flutter clean
+  #       - run: flutter build web
