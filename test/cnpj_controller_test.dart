@@ -1,4 +1,3 @@
-import 'package:cnpj_company/models/cnpj.dart';
 import 'package:cnpj_company/modules/cnpj_module/cnpj_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
