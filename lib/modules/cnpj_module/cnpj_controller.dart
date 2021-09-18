@@ -4,16 +4,16 @@ import 'cnpj_repository.dart';
 class CnpjController {
   final _repository = CnpjRepository();
   Future<Cnpj> getData(String cnpj) async {
-    final response = await _repository.getCnpj(null, fixCNPJ(cnpj));
+    final response = await _repository.getCnpj(fixCNPJ(cnpj));
     return response;
   }
-}
 
-String fixCNPJ(String cnpj) {
-  cnpj = cnpj
-      .replaceAll('.', '')
-      .replaceAll('/', '')
-      .replaceAll('-', '')
-      .replaceAll(',', '');
-  return cnpj;
+  String fixCNPJ(String cnpj) {
+    cnpj = cnpj
+        .replaceAll('.', '')
+        .replaceAll('/', '')
+        .replaceAll('-', '')
+        .replaceAll(',', '');
+    return cnpj;
+  }
 }
