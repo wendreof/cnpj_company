@@ -38,7 +38,7 @@ jobs:
           min_coverage: 0
 
   build_ios:
-    name: Build Flutter (iOS)
+    name: Build iOS
     needs: [flutter_test]
     runs-on: macos-latest
     steps:
@@ -54,7 +54,7 @@ jobs:
       - run: flutter build ios --release --no-codesign    
 
   build_appbundle:
-    name: Build Flutter (BUNDLE Android)
+    name: Build BUNDLE Android
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -75,7 +75,7 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
           
   build_apk:
-      name: Build Flutter (APK Android)
+      name: Build APK Android
       needs: [flutter_test]
       runs-on: ubuntu-latest
       steps:
@@ -92,6 +92,6 @@ jobs:
         - name: Upload apk
           uses: actions/upload-artifact@v2.1.4
           with:
-            name: appbundle
-            path: build/app/outputs/bundle/release/app-release.apk
+            name: apk
+            path: build/app/outputs/apk/release/app-debug.apk
 
