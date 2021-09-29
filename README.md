@@ -2,6 +2,7 @@
 
 [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fwendreolf)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fwendreof%2Fcnpj_company%2F)
 [![CI/CD](https://github.com/wendreof/cnpj_company/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/wendreof/cnpj_company/actions/workflows/ci-cd.yml)
+[![CI](https://github.com/wendreof/cnpj_company/actions/workflows/ci.yml/badge.svg)](https://github.com/wendreof/cnpj_company/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/wendreof/cnpj_company)](https://github.com/wendreof/cnpj_company/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/wendreof/cnpj_company)](https://github.com/wendreof/cnpj_company/network)
 [![codecov](https://codecov.io/gh/wendreof/cnpj_company/branch/master/graph/badge.svg?token=UQC8XJ3ZRE)](https://codecov.io/gh/wendreof/cnpj_company)
