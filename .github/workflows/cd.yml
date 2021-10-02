@@ -162,7 +162,7 @@ jobs:
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          releaseName: 9 (1.0.0)
+          releaseName: ${{ env.NUMBER_OF_COMMITS }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
@@ -192,7 +192,7 @@ jobs:
           git push origin gh-pages -f
 
   notify_telegram1:
-    name: notify_sucess
+    name: Notify Publish Success
     needs: [publish_ghPages]
     runs-on: ubuntu-latest
     steps:
@@ -201,10 +201,10 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            You've published sucessfully CNPJ_COMPANY to GitHub Pages :)
+            You've published sucessfully CNPJ_COMPANY to GITHUB PAGES :)
 
   notify_telegram2:
-    name: notify_sucess
+    name: Notify Publish Success
     needs: [publish_playStore]
     runs-on: ubuntu-latest
     steps:
@@ -213,4 +213,4 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            You've published sucessfully CNPJ_COMPANY to Play Store :)
+            You've published sucessfully CNPJ_COMPANY to PLAY STORE :)
