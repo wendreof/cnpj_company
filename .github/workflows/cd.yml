@@ -156,12 +156,12 @@ jobs:
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          userFraction: 0.33
+          #userFraction: 0.33
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
   publish_ghPages:
-    name: Build Web
+    name: Publish GitHub Pages
     needs: [build_web]
     env:
       my_secret: ${{secrets.commit_secret}}
@@ -180,8 +180,8 @@ jobs:
           git config --global user.email wendreo@outlook.com
           git config --global user.name wendreof
           git status
-          # change this remote url for examle your remote url is https://github.com/wendreof/flutter_web.git then the following:
-          git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/flutter_web.git
+          # change this remote url for examle your remote url is https://github.com/wendreof/cnpj_company.git then the following:
+          git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/cnpj_company.git
           git checkout -b gh-pages
           git add --all
           git commit -m "update"
