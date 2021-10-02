@@ -155,7 +155,7 @@ jobs:
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          releaseName: 5 (1.0.0)
+          releaseName: 6 (1.0.0)
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
