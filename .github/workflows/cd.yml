@@ -164,7 +164,8 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: br.com.sistemasamazonas
-          releaseFile: build/app/outputs/bundle/release/app-release.aab
+          #releaseFile: build/app/outputs/bundle/release/app-release.aab
+          releaseFiles: app/build/outputs/bundle/release/*.aab
           track: internal
           inAppUpdatePriority: 2
           userFraction: 0.33
