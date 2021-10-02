@@ -127,17 +127,16 @@ jobs:
           echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
           echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
           echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
-          echo flutter.versionCode=\${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }} >> ${{env.PROPERTIES_PATH}}
-          echo flutter.versionName=\${{ env.NUMBER_OF_COMMITS }} >> ${{env.PROPERTIES_PATH}}
-
-          echo flutter.versionCode=\${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
-          echo flutter.versionName=\${{ env.NUMBER_OF_COMMITS_SINCE_TAG }}
 
       # Decoding base64 key into a file
       - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
 
       # Get dependencies and make assigned appbundle
       - run: |
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          pub global activate cider
+          cider release
+          cider version ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}+${{ env.NUMBER_OF_COMMITS_SINCE_TAG }}
           flutter pub get
           flutter build appbundle
 
