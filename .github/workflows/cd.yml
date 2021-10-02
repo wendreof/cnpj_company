@@ -151,12 +151,11 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: br.com.wendreof.cnpj
-          #releaseFile: build/app/outputs/bundle/release/app-release.aab
           releaseFiles: build/app/outputs/bundle/release/*.aab
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          #userFraction: 0.33
+          releaseName: 5 (1.0.0)
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
@@ -180,7 +179,6 @@ jobs:
           git config --global user.email wendreo@outlook.com
           git config --global user.name wendreof
           git status
-          # change this remote url for examle your remote url is https://github.com/wendreof/cnpj_company.git then the following:
           git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/cnpj_company.git
           git checkout -b gh-pages
           git add --all
