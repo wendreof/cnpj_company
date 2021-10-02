@@ -3,11 +3,9 @@ name: CI
 on:
   push:
     branches:
-      - develop
       - master
   pull_request:
     branches:
-      - develop
       - master
 
 env:
@@ -64,7 +62,7 @@ jobs:
           flutter build ios --release --no-codesign
 
   build_apk_bundle:
-    name: Build apk/appbundle (Debug)
+    name: (Debug) Build apk/appbundle
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -107,7 +105,7 @@ jobs:
           flutter build web
 
   publish_playStore:
-    name: Publish PlayStore (Release)
+    name: (Release) Publish PlayStore
     needs: [build_apk_bundle]
     runs-on: ubuntu-latest
     steps:
@@ -155,12 +153,12 @@ jobs:
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          releaseName: 7 (1.0.0)
+          releaseName: 8 (1.0.0)
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
   publish_ghPages:
-    name: Publish GitHub Pages
+    name: Publish GH Pages
     needs: [build_web]
     env:
       my_secret: ${{secrets.commit_secret}}
@@ -173,7 +171,6 @@ jobs:
       - run: |
           flutter pub get
           flutter build web --release
-      - run: |
           cd build/web
           git init
           git config --global user.email wendreo@outlook.com
@@ -184,3 +181,15 @@ jobs:
           git add --all
           git commit -m "update"
           git push origin gh-pages -f
+
+  notify_sucess:
+    name: notify_sucess
+    needs: [publish_ghPages]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            You've published sucessfully your app!

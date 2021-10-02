@@ -3,7 +3,7 @@ description: Get data of companies by CNPJ
 
 publish_to: "none"
 
-version: 1.0.0+7
+version: 1.0.0+8
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

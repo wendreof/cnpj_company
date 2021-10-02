@@ -3,12 +3,10 @@ name: CI/CD
 on:
   push:
     branches:
-      - develop
       - master
-    # pull_request:
-    #   branches:
-    #     - develop
-    #     - master
+  pull_request:
+    branches:
+      - master
 
 env:
   JAVA_VERSION: "12.x"
@@ -28,13 +26,14 @@ jobs:
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: flutter clean
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter format --dry-run --set-exit-if-changed lib/
-      - run: flutter format --dry-run --set-exit-if-changed test/
-      - run: flutter test --coverage
-      - run: flutter test --machine > test-results.json
+      - run: |
+          flutter clean
+          flutter pub get
+          flutter analyze
+          flutter format --dry-run --set-exit-if-changed lib/
+          flutter format --dry-run --set-exit-if-changed test/
+          flutter test --coverage
+          flutter test --machine > test-results.json
       - uses: dorny/test-reporter@v1.4.2
         with:
           name: test-results
@@ -42,4 +41,4 @@ jobs:
           reporter: flutter-json
       - uses: VeryGoodOpenSource/very_good_coverage@v1.1.1
         with:
-          min_coverage: 0
+          min_coverage: 10
