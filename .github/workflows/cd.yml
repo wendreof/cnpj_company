@@ -62,7 +62,7 @@ jobs:
       - run: flutter build ios --release --no-codesign
 
   build_appbundle:
-    name: Build APPBUNDLE for Android
+    name: Build APPBUNDLE Android (Debug)
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -76,11 +76,11 @@ jobs:
           flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build appbundle
+      - run: flutter build appbundle --debug
       - name: Upload appbundle
         uses: actions/upload-artifact@v2.1.4
         with:
-          name: appbundle_notAsigned
+          name: appbundle_debug
           path: build/app/outputs/bundle/release/app-release.aab
 
   build_apk:
@@ -102,7 +102,7 @@ jobs:
       - name: Upload apk
         uses: actions/upload-artifact@v2.1.4
         with:
-          name: apk
+          name: apk_debug
           path: build/app/outputs/flutter-apk/app-release.apk
 
   build_web:
@@ -151,7 +151,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: appbundle_assigned
+          name: appbundle_release
           path: build/app/outputs/bundle/release
 
       # # Creating googleServices.json
