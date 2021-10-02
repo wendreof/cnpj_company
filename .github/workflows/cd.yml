@@ -163,9 +163,9 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: service_account.json
-          packageName: br.com.sistemasamazonas
+          packageName: br.com.wendreof.cnpj
           #releaseFile: build/app/outputs/bundle/release/app-release.aab
-          releaseFiles: app/build/outputs/bundle/release/*.aab
+          releaseFiles: build/app/outputs/bundle/release/*.aab
           track: internal
           inAppUpdatePriority: 2
           userFraction: 0.33
