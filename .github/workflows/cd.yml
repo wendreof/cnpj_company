@@ -18,7 +18,7 @@ env:
 
 jobs:
   flutter_test:
-    name: Run Flutter analyze and test
+    name: Analyze and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
           file: coverage/lcov.info
 
   build_ios:
-    name: Build Flutter iOS
+    name: Build for iOS
     needs: [flutter_test]
     runs-on: macos-latest
     steps:
@@ -62,7 +62,7 @@ jobs:
       - run: flutter build ios --release --no-codesign
 
   build_appbundle:
-    name: Build Flutter APPBUNDLE Android
+    name: Build APPBUNDLE for Android
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -80,11 +80,11 @@ jobs:
       - name: Upload appbundle
         uses: actions/upload-artifact@v2.1.4
         with:
-          name: appbundle
+          name: appbundle_notAsigned
           path: build/app/outputs/bundle/release/app-release.aab
 
   build_apk:
-    name: Build Flutter APK Android
+    name: Build APK for Android
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -106,7 +106,7 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
 
   build_web:
-    name: Build Flutter WEB
+    name: Build for WEB
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -120,7 +120,7 @@ jobs:
       - run: flutter build web
 
   publish_playStore:
-    name: publish
+    name: Publish PlayStore
     needs: [build_appbundle]
     runs-on: ubuntu-latest
     steps:
@@ -148,10 +148,10 @@ jobs:
           flutter build appbundle
 
       # Make appbundle downloadable
-      - name: Upload artefato
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: appbundle
+          name: appbundle_assigned
           path: build/app/outputs/bundle/release
 
       # # Creating googleServices.json
