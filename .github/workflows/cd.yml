@@ -136,7 +136,7 @@ jobs:
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           pub global activate cider
           cider release
-          cider version ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}+${{ env.NUMBER_OF_COMMITS_SINCE_TAG }}
+          cider version ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}+${{ env.NUMBER_OF_COMMITS }}
           flutter pub get
           flutter build appbundle
 
@@ -161,7 +161,7 @@ jobs:
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          releaseName: ${{ env.NUMBER_OF_COMMITS_SINCE_TAG }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
+          releaseName: ${{ env.NUMBER_OF_COMMITS }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
