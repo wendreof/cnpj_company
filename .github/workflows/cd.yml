@@ -29,13 +29,14 @@ jobs:
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: flutter clean
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter format --dry-run --set-exit-if-changed lib/
-      - run: flutter format --dry-run --set-exit-if-changed test/
-      - run: flutter test --coverage
-      - run: flutter test --machine > test-results.json
+      - run: |
+          flutter clean
+          flutter pub get
+          flutter analyze
+          flutter format --dry-run --set-exit-if-changed lib/
+          flutter format --dry-run --set-exit-if-changed test/
+          flutter test --coverage
+          flutter test --machine > test-results.json
       - uses: dorny/test-reporter@v1.4.2
         with:
           name: test-results
@@ -58,8 +59,9 @@ jobs:
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: flutter pub get
-      - run: flutter build ios --release --no-codesign
+      - run: |
+          flutter pub get
+          flutter build ios --release --no-codesign
 
   build_apk_bundle:
     name: Build apk/appbundle (Debug)
@@ -74,10 +76,11 @@ jobs:
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: flutter clean
-      - run: flutter pub get
-      - run: flutter build appbundle --debug
-      - run: flutter build apk --debug
+      - run: |
+          flutter clean
+          flutter pub get
+          flutter build appbundle --debug
+          flutter build apk --debug
       - name: Upload appbundle
         uses: actions/upload-artifact@v2.1.4
         with:
@@ -121,8 +124,9 @@ jobs:
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: flutter pub get
-      - run: flutter build web
+      - run: |
+          flutter pub get
+          flutter build web
 
   publish_playStore:
     name: Publish PlayStore (Release)
@@ -159,21 +163,47 @@ jobs:
           name: appbundle_release
           path: build/app/outputs/bundle/release
 
-      # # Creating googleServices.json
-      - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
-        run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
+  #     # Creating googleServices.json
+  #     - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
+  #       run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
 
-      # # Upload file to Play Store
-      - name: Upload play store
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJson: service_account.json
-          packageName: br.com.wendreof.cnpj
-          #releaseFile: build/app/outputs/bundle/release/app-release.aab
-          releaseFiles: build/app/outputs/bundle/release/*.aab
-          track: internal
-          status: completed
-          inAppUpdatePriority: 2
-          userFraction: 0.33
-          whatsNewDirectory: distribution/whatsnew
-          mappingFile: build/app/outputs/mapping/release/mapping.txt
+  #     # Upload file to Play Store
+  #     - name: Upload play store
+  #       uses: r0adkll/upload-google-play@v1
+  #       with:
+  #         serviceAccountJson: service_account.json
+  #         packageName: br.com.wendreof.cnpj
+  #         #releaseFile: build/app/outputs/bundle/release/app-release.aab
+  #         releaseFiles: build/app/outputs/bundle/release/*.aab
+  #         track: internal
+  #         status: completed
+  #         inAppUpdatePriority: 2
+  #         userFraction: 0.33
+  #         whatsNewDirectory: distribution/whatsnew
+  #         mappingFile: build/app/outputs/mapping/release/mapping.txt
+
+  # publish_ghPages:
+  #   name: Build Web
+  #   env:
+  #     my_secret: ${{secrets.commit_secret}}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: ${{env.FLUTTER_CHANNEL}}
+  #     - run: |
+  #         flutter pub get
+  #         flutter build web --release
+  #     - run: |
+  #         cd build/web
+  #         git init
+  #         git config --global user.email wendreo@outlook.com
+  #         git config --global user.name wendreof
+  #         git status
+  #         # change this remote url for examle your remote url is https://github.com/wendreof/flutter_web.git then the following:
+  #         git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/flutter_web.git
+  #         git checkout -b gh-pages
+  #         git add --all
+  #         git commit -m "update"
+  #         git push origin gh-pages -f
