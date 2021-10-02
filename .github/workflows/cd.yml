@@ -46,6 +46,13 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           file: coverage/lcov.info
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Mandatory to use the extract version from tag action
+      - name: Extract version from tag
+        uses: damienaicheh/extract-version-from-tag-action@v1.0.0
+
+  
 
   build_ios:
     name: Build for iOS
@@ -123,6 +130,9 @@ jobs:
           echo keyPassword=\${{ secrets.KEY_STORE }} > ${{env.PROPERTIES_PATH}}
           echo storePassword=\${{ secrets.KEY_PASSWORD }} >> ${{env.PROPERTIES_PATH}}
           echo keyAlias=\${{ secrets.KEY_ALIAS }} >> ${{env.PROPERTIES_PATH}}
+          
+          echo flutter.versionName=\'${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}' >> ${{env.PROPERTIES_PATH}}
+          echo flutter.versionCode=\'${{ env.NUMBER_OF_COMMITS }}' >> ${{env.PROPERTIES_PATH}}
 
       # Decoding base64 key into a file
       - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
