@@ -17,7 +17,7 @@ env:
   PROPERTIES_PATH: "./android/key.properties"
 
 jobs:
-  flutter_analyze:
+  flutter_test:
     name: Analyze/format/test
     runs-on: ubuntu-latest
     steps:
