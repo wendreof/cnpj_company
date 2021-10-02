@@ -62,7 +62,7 @@ jobs:
       - run: flutter build ios --release --no-codesign
 
   build_appbundle:
-    name: Build APPBUNDLE Android (Debug)
+    name: Build appbundle (Debug)
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -81,10 +81,10 @@ jobs:
         uses: actions/upload-artifact@v2.1.4
         with:
           name: appbundle_debug
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/debug/app-debug.aab
 
   build_apk:
-    name: Build APK for Android
+    name: Build APK (Debug)
     needs: [flutter_test]
     runs-on: ubuntu-latest
     steps:
@@ -98,12 +98,12 @@ jobs:
           flutter-version: ${{env.FLUTTER_VERSION}}
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build apk
+      - run: flutter build apk --debug
       - name: Upload apk
         uses: actions/upload-artifact@v2.1.4
         with:
           name: apk_debug
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
   build_web:
     name: Build for WEB
@@ -120,7 +120,7 @@ jobs:
       - run: flutter build web
 
   publish_playStore:
-    name: Publish PlayStore
+    name: Publish PlayStore (Release)
     needs: [build_appbundle]
     runs-on: ubuntu-latest
     steps:
