@@ -50,7 +50,7 @@ android {
         versionName flutterVersionName
     }
 
-    buildTypes {
+    signingConfigs {
         release {
             if (keystorePropertiesFile.exists()) {
                 //From decoded key
@@ -60,6 +60,14 @@ android {
                 keyPassword keystoreProperties['keyPassword']
                 storePassword keystoreProperties['storePassword']
             }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
