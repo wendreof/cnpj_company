@@ -92,28 +92,6 @@ jobs:
           name: apk_debug
           path: build/app/outputs/flutter-apk/app-debug.apk
 
-  # build_apk:
-  #   name: Build APK (Debug)
-  #   needs: [flutter_test]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-java@v1
-  #       with:
-  #         java-version: ${{env.JAVA_VERSION}}
-  #     - uses: subosito/flutter-action@v1
-  #       with:
-  #         channel: ${{env.FLUTTER_CHANNEL}}
-  #         flutter-version: ${{env.FLUTTER_VERSION}}
-  #     - run: flutter pub get
-  #     - run: flutter clean
-  #     - run: flutter build apk --debug
-  #     - name: Upload apk
-  #       uses: actions/upload-artifact@v2.1.4
-  #       with:
-  #         name: apk_debug
-  #         path: build/app/outputs/flutter-apk/app-debug.apk
-
   build_web:
     name: Build for WEB
     needs: [flutter_test]
@@ -163,47 +141,48 @@ jobs:
           name: appbundle_release
           path: build/app/outputs/bundle/release
 
-  #     # Creating googleServices.json
-  #     - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
-  #       run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
+      # Creating googleServices.json
+      - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
+        run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
 
-  #     # Upload file to Play Store
-  #     - name: Upload play store
-  #       uses: r0adkll/upload-google-play@v1
-  #       with:
-  #         serviceAccountJson: service_account.json
-  #         packageName: br.com.wendreof.cnpj
-  #         #releaseFile: build/app/outputs/bundle/release/app-release.aab
-  #         releaseFiles: build/app/outputs/bundle/release/*.aab
-  #         track: internal
-  #         status: completed
-  #         inAppUpdatePriority: 2
-  #         userFraction: 0.33
-  #         whatsNewDirectory: distribution/whatsnew
-  #         mappingFile: build/app/outputs/mapping/release/mapping.txt
+      # Upload file to Play Store
+      - name: Upload play store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: service_account.json
+          packageName: br.com.wendreof.cnpj
+          #releaseFile: build/app/outputs/bundle/release/app-release.aab
+          releaseFiles: build/app/outputs/bundle/release/*.aab
+          track: internal
+          status: completed
+          inAppUpdatePriority: 2
+          userFraction: 0.33
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: build/app/outputs/mapping/release/mapping.txt
 
-  # publish_ghPages:
-  #   name: Build Web
-  #   env:
-  #     my_secret: ${{secrets.commit_secret}}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - uses: subosito/flutter-action@v1
-  #       with:
-  #         channel: ${{env.FLUTTER_CHANNEL}}
-  #     - run: |
-  #         flutter pub get
-  #         flutter build web --release
-  #     - run: |
-  #         cd build/web
-  #         git init
-  #         git config --global user.email wendreo@outlook.com
-  #         git config --global user.name wendreof
-  #         git status
-  #         # change this remote url for examle your remote url is https://github.com/wendreof/flutter_web.git then the following:
-  #         git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/flutter_web.git
-  #         git checkout -b gh-pages
-  #         git add --all
-  #         git commit -m "update"
-  #         git push origin gh-pages -f
+  publish_ghPages:
+    name: Build Web
+    needs: [build_web]
+    env:
+      my_secret: ${{secrets.commit_secret}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{env.FLUTTER_CHANNEL}}
+      - run: |
+          flutter pub get
+          flutter build web --release
+      - run: |
+          cd build/web
+          git init
+          git config --global user.email wendreo@outlook.com
+          git config --global user.name wendreof
+          git status
+          # change this remote url for examle your remote url is https://github.com/wendreof/flutter_web.git then the following:
+          git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/flutter_web.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "update"
+          git push origin gh-pages -f
