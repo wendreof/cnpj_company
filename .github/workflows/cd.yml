@@ -46,11 +46,6 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           file: coverage/lcov.info
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Mandatory to use the extract version from tag action
-      - name: Extract version from tag
-        uses: damienaicheh/extract-version-from-tag-action@v1.0.0
 
   build_ios:
     name: Build for iOS
@@ -115,6 +110,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Mandatory to use the extract version from tag action
+      - name: Extract version from tag
+        uses: damienaicheh/extract-version-from-tag-action@v1.0.0
       - uses: actions/setup-java@v1
         with:
           java-version: ${{env.JAVA_VERSION}}
