@@ -131,7 +131,7 @@ jobs:
           echo flutter.versionName=\${{ env.NUMBER_OF_COMMITS }} >> ${{env.PROPERTIES_PATH}}
 
           echo flutter.versionCode=\${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
-          echo flutter.versionName=\${{ env.NUMBER_OF_COMMITS }}
+          echo flutter.versionName=\${{ env.NUMBER_OF_COMMITS_SINCE_TAG }}
 
       # Decoding base64 key into a file
       - run: echo "${{ secrets.KEYSTORE2 }}" | base64 --decode > android/app/key.jks
@@ -162,7 +162,7 @@ jobs:
           track: internal
           status: completed
           inAppUpdatePriority: 2
-          releaseName: ${{ env.NUMBER_OF_COMMITS }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
+          releaseName: ${{ env.NUMBER_OF_COMMITS_SINCE_TAG }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
           whatsNewDirectory: distribution/whatsnew
           mappingFile: build/app/outputs/mapping/release/mapping.txt
 
