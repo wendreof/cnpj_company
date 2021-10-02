@@ -17,7 +17,7 @@ env:
 
 jobs:
   flutter_test:
-    name: Run Flutter analyze and test
+    name: Analyze & format & test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,6 +28,7 @@ jobs:
         with:
           channel: ${{env.FLUTTER_CHANNEL}}
           flutter-version: ${{env.FLUTTER_VERSION}}
+      - run: flutter clean
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter format --dry-run --set-exit-if-changed lib/
