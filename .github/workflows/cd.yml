@@ -143,6 +143,7 @@ jobs:
           author_name: GitHub Actions
           author_email: actions@github.com
           message: "cider release --date"
+          push: origin master --force
 
       # Make appbundle downloadable
       - name: Upload artifact
