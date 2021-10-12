@@ -44,62 +44,62 @@ jobs:
         with:
           file: coverage/lcov.info
 
-  build_ios:
-    name: Build for iOS
-    needs: [flutter_test]
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: ${{env.FLUTTER_CHANNEL}}
-          flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: |
-          flutter pub get
-          flutter build ios --release --no-codesign
+  # build_ios:
+  #   name: Build for iOS
+  #   needs: [flutter_test]
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: ${{env.FLUTTER_CHANNEL}}
+  #         flutter-version: ${{env.FLUTTER_VERSION}}
+  #     - run: |
+  #         flutter pub get
+  #         flutter build ios --release --no-codesign
 
-  build_apk_bundle:
-    name: (Debug) Build apk/appbundle
-    needs: [flutter_test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: ${{env.JAVA_VERSION}}
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: ${{env.FLUTTER_CHANNEL}}
-          flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: |
-          flutter clean
-          flutter pub get
-          flutter build appbundle --debug
-          flutter build apk --debug
-      - name: Upload appbundle
-        uses: actions/upload-artifact@v2.1.4
-        with:
-          name: appbundle_debug
-          path: build/app/outputs/bundle/debug/app-debug.aab
-      - name: Upload apk
-        uses: actions/upload-artifact@v2.1.4
-        with:
-          name: apk_debug
-          path: build/app/outputs/flutter-apk/app-debug.apk
+  # build_apk_bundle:
+  #   name: (Debug) Build apk/appbundle
+  #   needs: [flutter_test]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{env.JAVA_VERSION}}
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: ${{env.FLUTTER_CHANNEL}}
+  #         flutter-version: ${{env.FLUTTER_VERSION}}
+  #     - run: |
+  #         flutter clean
+  #         flutter pub get
+  #         flutter build appbundle --debug
+  #         flutter build apk --debug
+  #     - name: Upload appbundle
+  #       uses: actions/upload-artifact@v2.1.4
+  #       with:
+  #         name: appbundle_debug
+  #         path: build/app/outputs/bundle/debug/app-debug.aab
+  #     - name: Upload apk
+  #       uses: actions/upload-artifact@v2.1.4
+  #       with:
+  #         name: apk_debug
+  #         path: build/app/outputs/flutter-apk/app-debug.apk
 
-  build_web:
-    name: Build for WEB
-    needs: [flutter_test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: ${{env.FLUTTER_CHANNEL}}
-          flutter-version: ${{env.FLUTTER_VERSION}}
-      - run: |
-          flutter pub get
-          flutter build web
+  # build_web:
+  #   name: Build for WEB
+  #   needs: [flutter_test]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: ${{env.FLUTTER_CHANNEL}}
+  #         flutter-version: ${{env.FLUTTER_VERSION}}
+  #     - run: |
+  #         flutter pub get
+  #         flutter build web
 
   publish_playStore:
     name: (Release) Publish PlayStore
@@ -142,79 +142,80 @@ jobs:
         with:
           author_name: GitHub Actions
           author_email: actions@github.com
+          branch: master
           message: "cider release --date"
           push: origin master --force
 
-      # Make appbundle downloadable
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: appbundle_release
-          path: build/app/outputs/bundle/release
+  #     # Make appbundle downloadable
+  #     - name: Upload artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: appbundle_release
+  #         path: build/app/outputs/bundle/release
 
-      # Creating googleServices.json
-      - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
-        run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
+  #     # Creating googleServices.json
+  #     - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
+  #       run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
 
-      # Upload file to Play Store
-      - name: Upload play store
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJson: service_account.json
-          packageName: br.com.wendreof.cnpj
-          releaseFiles: build/app/outputs/bundle/release/*.aab
-          track: internal
-          status: completed
-          inAppUpdatePriority: 2
-          releaseName: ${{ env.NUMBER_OF_COMMITS }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
-          whatsNewDirectory: distribution/whatsnew
-          mappingFile: build/app/outputs/mapping/release/mapping.txt
+  #     # Upload file to Play Store
+  #     - name: Upload play store
+  #       uses: r0adkll/upload-google-play@v1
+  #       with:
+  #         serviceAccountJson: service_account.json
+  #         packageName: br.com.wendreof.cnpj
+  #         releaseFiles: build/app/outputs/bundle/release/*.aab
+  #         track: internal
+  #         status: completed
+  #         inAppUpdatePriority: 2
+  #         releaseName: ${{ env.NUMBER_OF_COMMITS }} (${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }})
+  #         whatsNewDirectory: distribution/whatsnew
+  #         mappingFile: build/app/outputs/mapping/release/mapping.txt
 
-  publish_ghPages:
-    name: Publish GH Pages
-    needs: [build_web]
-    env:
-      my_secret: ${{secrets.commit_secret}}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: ${{env.FLUTTER_CHANNEL}}
-      - run: |
-          flutter pub get
-          flutter build web --release
-          cd build/web
-          git init
-          git config --global user.email wendreo@outlook.com
-          git config --global user.name wendreof
-          git status
-          git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/cnpj_company.git
-          git checkout -b gh-pages
-          git add --all
-          git commit -m "update"
-          git push origin gh-pages -f
+  # publish_ghPages:
+  #   name: Publish GH Pages
+  #   needs: [build_web]
+  #   env:
+  #     my_secret: ${{secrets.commit_secret}}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: ${{env.FLUTTER_CHANNEL}}
+  #     - run: |
+  #         flutter pub get
+  #         flutter build web --release
+  #         cd build/web
+  #         git init
+  #         git config --global user.email wendreo@outlook.com
+  #         git config --global user.name wendreof
+  #         git status
+  #         git remote add origin https://${{secrets.commit_secret}}@github.com/wendreof/cnpj_company.git
+  #         git checkout -b gh-pages
+  #         git add --all
+  #         git commit -m "update"
+  #         git push origin gh-pages -f
 
-  notify_telegram1:
-    name: Notify Publish Success
-    needs: [publish_ghPages]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            You've published sucessfully CNPJ_COMPANY to GITHUB PAGES :)
+  # notify_telegram1:
+  #   name: Notify Publish Success
+  #   needs: [publish_ghPages]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: appleboy/telegram-action@master
+  #       with:
+  #         to: ${{ secrets.TELEGRAM_TO }}
+  #         token: ${{ secrets.TELEGRAM_TOKEN }}
+  #         message: |
+  #           You've published sucessfully CNPJ_COMPANY to GITHUB PAGES :)
 
-  notify_telegram2:
-    name: Notify Publish Success
-    needs: [publish_playStore]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            You've published sucessfully CNPJ_COMPANY to PLAY STORE :)
+  # notify_telegram2:
+  #   name: Notify Publish Success
+  #   needs: [publish_playStore]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: appleboy/telegram-action@master
+  #       with:
+  #         to: ${{ secrets.TELEGRAM_TO }}
+  #         token: ${{ secrets.TELEGRAM_TOKEN }}
+  #         message: |
+  #           You've published sucessfully CNPJ_COMPANY to PLAY STORE :)
