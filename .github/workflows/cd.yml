@@ -1,12 +1,9 @@
-name: CI
+name: CI/CD
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    tags:
+      - "*"
 
 env:
   JAVA_VERSION: "12.x"
@@ -135,7 +132,7 @@ jobs:
       - run: |
           export PATH="$PATH":"$HOME/.pub-cache/bin"
           pub global activate cider
-          cider release
+          cider release --date
           cider version ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}+${{ env.NUMBER_OF_COMMITS }}
           flutter pub get
           flutter build appbundle

@@ -1,13 +1,8 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:load/load.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:snack/snack.dart';
 
 import '../../models/cnpj.dart';
@@ -275,18 +270,6 @@ class _CnpjPageState extends State<CnpjPage> {
   }
 
   void _share() async {
-    if (!kIsWeb) {
-      await screenshotController
-          .capture(delay: const Duration(milliseconds: 10))
-          .then((image) async {
-        if (image != null) {
-          final directory = await getApplicationDocumentsDirectory();
-          final imagePath = await File('${directory.path}/image.png').create();
-          await imagePath.writeAsBytes(image);
-
-          await Share.shareFiles([imagePath.path]);
-        }
-      });
-    }
+    await _controller.share(screenshotController);
   }
 }
