@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.7+118] - 2021-10-12
 ### Added
 - \*.jks included on gitignore
 
@@ -13,5 +13,5 @@
 ### Changed
 - Putting share function on cnpj\_controller
 
-[Unreleased]: https://github.com/wendreof/cnpj_company/compare/1.0.2+112...HEAD
+[1.0.7+118]: https://github.com/wendreof/cnpj_company/compare/1.0.2+112...1.0.7+118
 [1.0.2+112]: https://github.com/wendreof/cnpj_company/releases/tag/1.0.2+112
