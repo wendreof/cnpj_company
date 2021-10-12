@@ -1,3 +1,10 @@
+## [Unreleased]
+### Added
+- \*.jks included on gitignore
+
+### Changed
+- Removing something from git history =)
+
 ## [1.0.2+112] - 2021-10-12
 ### Added
 - Added cider package and CHANGELOG.md
@@ -6,4 +13,5 @@
 ### Changed
 - Putting share function on cnpj\_controller
 
+[Unreleased]: https://github.com/wendreof/cnpj_company/compare/1.0.2+112...HEAD
 [1.0.2+112]: https://github.com/wendreof/cnpj_company/releases/tag/1.0.2+112
