@@ -34,4 +34,18 @@ void main() {
     expect(find.textContaining('válido'), findsOneWidget);
     expect(find.textContaining('wendreo'), findsNothing);
   });
+
+  testWidgets('Check other widgets', (tester) async {
+    // Build our app and trigger a frame.
+
+    final Widget testWidget = MediaQuery(
+        data: MediaQueryData(),
+        child: MaterialApp(home: CnpjPage(title: 'Pesquisa CNPJ')));
+
+    await tester.pumpWidget(testWidget);
+
+    expect(find.byIcon(Icons.share), findsOneWidget);
+    // final btnShare = find.byIcon(Icons.share);
+    // await tester.tap(btnShare);
+  });
 }
