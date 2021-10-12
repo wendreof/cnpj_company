@@ -103,7 +103,7 @@ jobs:
 
   publish_playStore:
     name: (Release) Publish PlayStore
-    needs: [build_apk_bundle]
+    #needs: [build_apk_bundle]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
