@@ -1,0 +1,18 @@
+name: cnpj-company
+version: 1.0.8+120
+summary: Search for any brazilian CNPJ and share it
+description: Search for any brazilian CNPJ and share it
+
+confinement: strict
+base: core18
+
+parts:
+  cnpj-company:
+    plugin: flutter
+    source: https://github.com/wendreof/cnpj_company.git
+    flutter-target: lib/main.dart
+
+apps:
+  cnpj-company:
+    command: cnpj_company
+    extensions: [flutter-dev]

@@ -43,7 +43,7 @@ cider:
     diff: https://github.com/wendreof/cnpj_company/compare/%from%...%to% # subsequent releases link template
 
 flutter_icons:
-  image_path: "images/loupe.png"
+  image_path: "images/logo.jpeg"
   android: true
   ios: true
 

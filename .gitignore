@@ -47,3 +47,6 @@ app.*.map.json
 *.aab
 *.properties
 *.jks
+
+# snap build
+*.snap
