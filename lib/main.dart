@@ -24,8 +24,5 @@ Future<void> main() async {
             home: CnpjPage(
               title: 'Pesquisa CNPJ',
             ),
-          )
-          ));
-
-          
+          )));
 }

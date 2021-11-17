@@ -271,6 +271,6 @@ class _CnpjPageState extends State<CnpjPage> {
 
   void _share() async {
     await _controller.share(screenshotController);
-      //throw new StateError('This is a Dart exception.');
+    //throw new StateError('This is a Dart exception.');
   }
 }
