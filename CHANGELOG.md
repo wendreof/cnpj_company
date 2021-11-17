@@ -1,7 +1,4 @@
-## [1.0.8+120] - 2021-10-12
-### Added
-- Updating readme.md
-
+## [1.0.8+120] - 2021-11-17
 ## [1.0.7+118] - 2021-10-12
 ### Added
 - \*.jks included on gitignore
